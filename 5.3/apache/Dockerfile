@@ -1,57 +1,113 @@
-FROM buildpack-deps:jessie
+FROM debian:jessie
 
-ENV PHP_VERSION 5.3.29
-
-COPY docker-php-ext-enable /usr/local/bin/
-
-RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends \
-        apache2-bin \
-        apache2-dev \
-        apache2.2-common \
-        autoconf2.13 \
+# Общие зависимости и инструменты.
+RUN apt-get update && apt-get install -y  --no-install-recommends \
+        bzip2 \
+        ca-certificates \
         curl \
-        git \
-        libicu-dev \
-        libmcrypt-dev \
-        libtidy-dev \
+        librecode0 \
+        libsqlite3-0 \
+        libxml2 \
         wget \
-    && curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-    && apt-get install nodejs \
-    && rm -r /var/lib/apt/lists/* \
+    && rm -r /var/lib/apt/lists/*
+
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
+    && apt-get install -y --no-install-recommends \
+        git \
+        make \
+        nodejs \
+    && rm -r /var/lib/apt/lists/*
+
+#
+# Установка Apache HTTPD
+#
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        apache2-bin \
+        apache2.2-common \
+    && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
     && mkdir -p \
         /var/lock/apache2 \
-        /var/log/apache2 \
         /var/run/apache2 \
+        /var/log/apache2 \
         /var/www/html \
     && chown -R www-data:www-data \
         /var/lock/apache2 \
-        /var/log/apache2 \
         /var/run/apache2 \
+        /var/log/apache2 \
         /var/www/html \
     && a2dismod mpm_event \
     && a2enmod mpm_prefork \
     && mv /etc/apache2/apache2.conf /etc/apache2/apache2.conf.dist \
-    && gpg --keyserver pgp.mit.edu --recv-keys \
+    && rm /etc/apache2/conf-enabled/* /etc/apache2/sites-enabled/* \
+    && usermod --shell /bin/sh www-data
+
+COPY apache2.conf /etc/apache2/apache2.conf
+
+# Было бы хорошо отложить копиравание этого на конец Dockerfile, но при компиляции PHP проверяется
+# его содержимое.
+COPY apache2.conf /etc/apache2/apache2.conf
+
+#
+# Установка PHP.
+#
+
+ENV PHP_INI_DIR /usr/local/etc/php
+ENV PHP_EXTRA_BUILD_DEPS apache2-dev
+RUN mkdir -p $PHP_INI_DIR/conf.d
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        apache2-dev \
+        autoconf2.13 \
+        file \
+        g++ \
+        gcc \
+        libbz2-dev \
+        libc-dev \
+        libcurl4-openssl-dev \
+        libicu-dev \
+        libmcrypt-dev \
+        libpng12-dev \
+        libpq-dev \
+        libreadline6-dev \
+        librecode-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libtidy-dev \
+        libxml2-dev \
+        libxslt1-dev \
+        pkg-config \
+        re2c \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PHP_VERSION 5.3.29
+
+RUN set -x \
+    &&gpg --keyserver pgp.mit.edu --recv-keys \
         0B96609E270F565C13292B24C13C70B87267B52D \
         0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7 \
     && curl -SLO http://launchpadlibrarian.net/140087283/libbison-dev_2.7.1.dfsg-1_amd64.deb \
     && curl -SLO http://launchpadlibrarian.net/140087282/bison_2.7.1.dfsg-1_amd64.deb \
     && dpkg -i libbison-dev_2.7.1.dfsg-1_amd64.deb \
     && dpkg -i bison_2.7.1.dfsg-1_amd64.deb \
-    && rm *.deb \
+    && rm *.deb
+
+RUN set -x \
     && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.bz2/from/this/mirror" -o php.tar.bz2 \
     && curl -SL "http://php.net/get/php-$PHP_VERSION.tar.bz2.asc/from/this/mirror" -o php.tar.bz2.asc \
     && gpg --verify php.tar.bz2.asc \
     && mkdir -p /usr/src/php \
-    && tar -xf php.tar.bz2 -C /usr/src/php --strip-components=1 \
+    && tar -xof php.tar.bz2 -C /usr/src/php --strip-components=1 \
     && rm php.tar.bz2* \
     && cd /usr/src/php \
     && ./buildconf --force \
     && ./configure \
         --disable-all \
-        $(command -v apxs2 > /dev/null 2>&1 && echo '--with-apxs2' || true) \
+        --with-apxs2 \
+        --with-config-file-path="$PHP_INI_DIR" \
+        --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+        --with-libdir=/lib/x86_64-linux-gnu \
         --enable-libxml \
         --enable-xml \
         --enable-ctype=shared \
@@ -97,27 +153,24 @@ RUN set -x \
         --with-xsl=shared \
         --with-zlib \
         --with-pear \
-        --with-config-file-path=/usr/local/etc/php \
-        --with-config-file-scan-dir=/usr/local/etc/php/conf.d \
-        --with-libdir=/lib/x86_64-linux-gnu \
     && make -j"$(nproc)" \
     && make install \
-    && mkdir -p /usr/local/etc/php/conf.d \
-    && cp php.ini-development /usr/local/etc/php/php.ini \
+    && mkdir -p "$PHP_INI_DIR/conf.d" \
+    && cp php.ini-development "$PHP_INI_DIR/php.ini" \
     && dpkg -r bison libbison-dev \
     && apt-get purge -y --auto-remove autoconf2.13 \
-    && rm -r /usr/src/php \
+    && rm -r /usr/src/php
+
+RUN set -x \
     && wget https://getcomposer.org/installer -O - -q | \
         php \
             -d extension=json.so -d extension=phar.so -d extension=hash.so \
             -d extension=mbstring.so -- \
-        --force --install-dir=/usr/local/bin --filename=composer \
-    && usermod --shell /bin/sh www-data \
-    && chown www-data /var/www \
+        --force --install-dir=/usr/local/bin --filename=composer
+
+RUN set -x \
     && pecl channel-update pecl.php.net \
     && pecl install xdebug-2.2.7
-
-COPY apache2.conf /etc/apache2/apache2.conf
 
 WORKDIR /var/www/site
 VOLUME /var/www/site

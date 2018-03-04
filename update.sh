@@ -42,7 +42,7 @@ for version in "${versions[@]}"; do
 #	fi
 
 	( set -x; cp docker-entrypoint.sh "${version}/" )
-#	( set -x; cp docker-php-ext-* "$version/" )
+	( set -x; cp docker-php-ext-* "$version/" )
 
 	for variant in apache; do
 #		echo "Generating $version/$variant/Dockerfile from $variant-Dockerfile-block-*"
@@ -54,7 +54,7 @@ for version in "${versions[@]}"; do
 #			ia && ac == 1 { system("cat '$variant'-Dockerfile-block-" ab) }
 #		' "$version/Dockerfile" > "$version/$variant/Dockerfile"
 		( set -x; cp docker-entrypoint.sh "$version/$variant/" )
-#		( set -x; cp docker-php-ext-* "$version/$variant/" )
+		( set -x; cp docker-php-ext-* "$version/$variant/" )
 	done
 
 #	if [ -z "$fullVersion" ]; then

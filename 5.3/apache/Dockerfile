@@ -176,7 +176,9 @@ WORKDIR /var/www/site
 VOLUME /var/www/site
 
 COPY docker-entrypoint.sh /
-ENTRYPOINT ["/docker-entrypoint.sh"]
+COPY docker-php-* /usr/local/bin/
+
+ENTRYPOINT ["docker-php-entrypoint"]
 
 EXPOSE 80
 CMD ["apache2", "-DFOREGROUND"]

@@ -164,8 +164,8 @@ RUN set -x \
     && pecl channel-update pecl.php.net \
     && pecl install xdebug-2.2.7
 
-WORKDIR /var/www/site
-VOLUME /var/www/site
+WORKDIR /var/www/html
+VOLUME /var/www/html
 
 COPY docker-php-* /usr/local/bin/
 

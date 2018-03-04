@@ -175,7 +175,6 @@ RUN set -x \
 WORKDIR /var/www/site
 VOLUME /var/www/site
 
-COPY docker-entrypoint.sh /
 COPY docker-php-* /usr/local/bin/
 
 ENTRYPOINT ["docker-php-entrypoint"]

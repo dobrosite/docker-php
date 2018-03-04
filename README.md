@@ -14,7 +14,9 @@
    по составу ПО, используемым версиями, настройкам и т. п.
 2. **Официальные источники ПО**. Если это возможно, используются официальные образы и способы
    установки ПО.
-3. ****
+3. **Настрой сам**. Образы содержат широкий набор расширений PHP, приложений и инструментов, но по
+   умолчанию подключены только самые необходимые. Использование всего остального остаётся на
+   усмотрение разработчика.
 
 ## Подключение и использование
 
@@ -37,16 +39,17 @@ services:
 
 В каждый образ включены:
 
-- PHP (включая cli), с расширениями:
+- PHP (включая cli):
+- Стандартные расширения PHP:
   - [bzip2](http://php.net/bzip2)
   - [ctype](http://php.net/ctype)
   - [curl](http://php.net/curl)
-  - [date](http://php.net/date)
+  - [date](http://php.net/manual/ref.datetime.php)
   - [DOM](http://php.net/dom)
-  - [eregi](http://php.net/eregi)
+  - [eregi](http://php.net/eregi) (в версиях до 7.0)
   - [exif](http://php.net/exif)
   - [fileinfo](http://php.net/fileinfo)
-  - [filter](http://php.net/)
+  - [filter](http://php.net/filter)
   - [ftp](http://php.net/ftp)
   - [gd](http://php.net/gd)
   - [gettext](http://php.net/gettext)
@@ -57,22 +60,22 @@ services:
   - [libxml](http://php.net/libxml)
   - [mbstring](http://php.net/mbstring)
   - [mcrypt](http://php.net/mcrypt)
-  - [mysql](http://php.net/mysql)
+  - [mysql](http://php.net/manual/book.mysql.php)
   - [mysqli](http://php.net/mysqli)
   - [mysqlnd](http://php.net/mysqlnd)
   - [openssl](http://php.net/openssl)
   - [pcntl](http://php.net/pcntl)
   - [pcre](http://php.net/pcre)
-  - [pdo](http://php.net/pdo_mysql)
+  - [pdo](http://php.net/pdo)
   - [pdo_mysql](http://php.net/pdo_mysql)
   - [pdo_pgsql](http://php.net/pdo_pgsql)
-  - [pdo_sqlite3](http://php.net/pdo_sqlite3)
+  - [pdo_sqlite3](http://php.net/pdo_sqlite)
   - [pgsql](http://php.net/pgsql)
   - [phar](http://php.net/phar)
   - [posix](http://php.net/posix)
   - [readline](http://php.net/readline)
   - [reflection](http://php.net/reflection)
-  - [session](http://php.net/session)
+  - [session](http://php.net/manual/book.session.php)
   - [simplexml](http://php.net/simplexml)
   - [soap](http://php.net/soap)
   - [sockets](http://php.net/sockets)
@@ -80,12 +83,13 @@ services:
   - [sqlite](http://php.net/sqlite)
   - [tidy](http://php.net/tidy)
   - [tokenizer](http://php.net/tokenizer)
-  - [xdebug](http://xdebug.org/)
   - [xml](http://php.net/xml)
   - [xmlreader](http://php.net/xmlreader)
   - [xmlwriter](http://php.net/xmlwriter)
   - [xsl](http://php.net/xsl)
   - [zip](http://php.net/zip)
   - [zlib](http://php.net/zlib)
+- Сторонние расширения PHP:
+  - [xdebug](https://xdebug.org/)
 - [PEAR](http://pear.php.net/)
 - [Apache HTTP](http://httpd.apache.org/)

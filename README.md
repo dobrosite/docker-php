@@ -29,17 +29,29 @@
 version: '3'
 services:
     web:
-        build:
-            image: doborosite/php:5.3-apache
+        image: dobrosite/php:5.3-apache
+        environment:
+            FILE_OWNER_UID: 1000
+            APACHE_MODULES: env rewrite
+            PHP_EXTENSIONS: iconv mstring pdo_mysql
         ports:
             - '80:80'
 ```
 
-## Состав образа
+### Настройки
 
-В каждый образ включены:
+Главные настройки можно произвести через переменные окружения.
 
-- PHP (включая cli):
+- `APACHE_MODULES` — разделённый пробелами список [модулей](http://httpd.apache.org/docs/2.4/mod/),
+  которые следует подключить. Имена должны указываться без приставки `mod_`.
+- `FILE_OWNER_UID` — UID для пользователя `www-data`, от которого работает веб-сервер.
+- `PHP_EXTENSIONS` — разделённый пробелами список расширений PHP, которые следует подключить.
+
+## Содержимое образов
+
+### Общее для всех образов
+
+- PHP [cli SAPI](http://php.net/manual/features.commandline.php)
 - Стандартные расширения PHP:
   - [bzip2](http://php.net/bzip2)
   - [ctype](http://php.net/ctype)
@@ -90,6 +102,10 @@ services:
   - [zip](http://php.net/zip)
   - [zlib](http://php.net/zlib)
 - Сторонние расширения PHP:
-  - [xdebug](https://xdebug.org/)
+  - [xdebug](https://xdebug.org/) (версия зависит от версии PHP)
 - [PEAR](http://pear.php.net/)
-- [Apache HTTP](http://httpd.apache.org/)
+
+### Образы *-apache
+
+- PHP [apache SAPI](http://php.net/manual/install.unix.apache2.php)
+- [Apache HTTP](http://httpd.apache.org/) 2.4

@@ -119,11 +119,11 @@ RUN set -x \
 
 COPY apache2.conf /etc/apache2/apache2.conf
 
-ARG FILE_OWNER_UID=1000
-RUN usermod --uid ${FILE_OWNER_UID} www-data && chown www-data /var/www
-
 WORKDIR /var/www/site
 VOLUME /var/www/site
 
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
 EXPOSE 80
-CMD ["apachectl", "start", "-DFOREGROUND"]
+CMD ["apache2", "-DFOREGROUND"]

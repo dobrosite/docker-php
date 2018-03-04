@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libcurl4-openssl-dev \
         libicu-dev \
         libmcrypt-dev \
+        libmysqld-dev \
         libpng12-dev \
         libpq-dev \
         libreadline6-dev \
@@ -84,7 +85,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PHP_VERSION 5.3.29
 
 RUN set -x \
-    &&gpg --keyserver pgp.mit.edu --recv-keys \
+    &&gpg --keyserver ha.pool.sks-keyservers.net --recv-keys \
         0B96609E270F565C13292B24C13C70B87267B52D \
         0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7 \
     && curl -SLO http://launchpadlibrarian.net/140087283/libbison-dev_2.7.1.dfsg-1_amd64.deb \
@@ -158,7 +159,6 @@ RUN set -x \
     && mkdir -p "$PHP_INI_DIR/conf.d" \
     && cp php.ini-development "$PHP_INI_DIR/php.ini" \
     && dpkg -r bison libbison-dev \
-    && apt-get purge -y --auto-remove autoconf2.13 \
     && rm -r /usr/src/php
 
 RUN set -x \

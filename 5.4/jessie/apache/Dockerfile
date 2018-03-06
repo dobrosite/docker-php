@@ -160,6 +160,7 @@ RUN set -xe; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps
 
 COPY docker-php-* /usr/local/bin/
+COPY php*.ini /usr/local/etc/php/
 
 RUN set -eux; \
 	\

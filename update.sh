@@ -224,14 +224,4 @@ for version in "${versions[@]}"; do
 		entrypoint="$(dirname "$dockerfile")/docker-php-entrypoint"
 		sed -i 's! php ! '"$cmd"' !g' "$entrypoint"
 	done
-
-	newTravisEnv=
-	for dockerfile in "${dockerfiles[@]}"; do
-		dir="${dockerfile%Dockerfile}"
-		dir="${dir%/}"
-		variant="${dir#$version}"
-		variant="${variant#/}"
-		newTravisEnv+='\n  - VERSION='"$version VARIANT=$variant"
-	done
-	travisEnv="$newTravisEnv$travisEnv"
 done

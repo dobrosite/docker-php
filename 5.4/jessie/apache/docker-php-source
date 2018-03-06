@@ -21,7 +21,7 @@ case "$1" in
 		    if [ -f /usr/src/php.tar.xz ]; then
 			    tar -Jxf /usr/src/php.tar.xz -C "$dir" --strip-components=1
             elif [ -f /usr/src/php.tar.bz2 ]; then
-			    tar -xfj /usr/src/php.tar.bz2 -C "$dir" --strip-components=1
+			    tar -jxf /usr/src/php.tar.bz2 -C "$dir" --strip-components=1
             else
                 echo 'PHP source tarball not found!'
                 exit 129

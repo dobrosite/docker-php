@@ -27,7 +27,6 @@ ENV PHPIZE_DEPS \
 		re2c
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
-		bzip2 \
 		ca-certificates \
 		curl \
         git \
@@ -116,7 +115,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 ENV GPG_KEYS A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 1729F83938DA44E27BA0F4D3DBDB397470D12172
 
 ENV PHP_VERSION 7.1.15
-ENV PHP_URL="https://secure.php.net/get/php-7.1.15.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.15.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php-7.1.15.tar.bz2"
+ENV PHP_URL="https://secure.php.net/get/php-7.1.15.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.15.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
 ENV PHP_SHA256="e117a54738e9485de5fc75673d39dbe937dd87f0f9cc9e281960ef9b961adcbd" PHP_MD5=""
 
 RUN set -xe; \
@@ -165,12 +164,21 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+# Для расширения bzip2.
 		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
+# Для поддержки PNG расширением gd.
+		libpng-dev \
+# Для поддержки PostgreSQL.
+		libpq-dev \
 		libsqlite3-dev \
 		libssl-dev \
+# Для расширения tidy.
+		libtidy-dev \
 		libxml2-dev \
+# Для расширения xsl.
+		libxslt1-dev \
 		zlib1g-dev \
 		${PHP_EXTRA_BUILD_DEPS:-} \
 	; \
@@ -240,10 +248,10 @@ RUN set -eux; \
         --with-openssl=/usr \
         --with-pdo_mysql=shared \
         --with-pdo_pgsql=shared \
-        --with-pdo_sqlite3=shared \
+        --with-pdo_sqlite=shared \
         --with-pgsql=shared \
         --with-readline=shared \
-        --with-sqlite=shared \
+        --with-sqlite3=shared \
         --with-tidy=shared \
         --with-xsl=shared \
 		--with-zlib \
@@ -283,10 +291,8 @@ RUN set -eux; \
 
 RUN set -x \
     && wget https://getcomposer.org/installer -O - -q | \
-        php \
-            -d extension=json.so -d extension=phar.so -d extension=hash.so \
-            -d extension=mbstring.so -- \
-        --force --install-dir=/usr/local/bin --filename=composer
+        php -d extension=json.so -d extension=phar.so -d extension=hash.so \
+        -- --force --install-dir=/usr/local/bin --filename=composer
 
 ENTRYPOINT ["docker-php-entrypoint"]
 WORKDIR /var/www/html

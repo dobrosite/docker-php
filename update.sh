@@ -180,7 +180,7 @@ for version in "${versions[@]}"; do
             if [ ! -z "${oldFiles}" ]; then
                 rm ${oldFiles}
             fi
-			cp docker-php-* "$version/$suite/$variant/"
+			cp docker-* "$version/$suite/$variant/"
 
 			if [ "$alpineVer" = '3.4' ]; then
 				sed -ri 's!libressl!openssl!g' "$version/$suite/$variant/Dockerfile"

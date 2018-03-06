@@ -93,7 +93,7 @@ RUN set -xe; \
 	\
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps
 
-COPY docker-* /usr/local/bin/
+COPY docker-php-* /usr/local/bin/
 
 RUN set -eux; \
 	\

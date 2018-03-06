@@ -112,6 +112,9 @@ services:
 - Сторонние расширения PHP:
   - [xdebug](https://xdebug.org/) (версия зависит от версии PHP)
 - [PEAR](http://pear.php.net/)
+- [Composer](https://getcomposer.org/)
+- [Git](https://git-scm.com)
+- [GNU Make](https://www.gnu.org/software/make/manual/make.html)
 
 ### Образы *-apache
 

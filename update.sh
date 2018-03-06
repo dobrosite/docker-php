@@ -45,7 +45,7 @@ scripts=(
     'docker-php-ext-configure'
     'docker-php-ext-enable'
     'docker-php-ext-install'
-    'docker-php-source'
+#    'docker-php-source' У нас используется изменённая версия.
 )
 for script in ${scripts[*]}; do
     curl -sSL "https://raw.githubusercontent.com/docker-library/php/master/${script}" -o ${script}
@@ -86,12 +86,13 @@ for version in "${versions[@]}"; do
 		(keys[] | select(startswith("'"$rcVersion"'."))) as $version
 		| [ $version, (
 			.[$version].source[]
-			| select(.filename // "" | endswith(".xz"))
+			| select(.filename // "" | endswith(".xz") // endswith(".bz2"))
 			|
 				"https://secure.php.net/get/" + .filename + "/from/this/mirror",
 				"https://secure.php.net/get/" + .filename + ".asc/from/this/mirror",
 				.sha256 // "",
-				.md5 // ""
+				.md5 // "",
+				.filename
 		) ]
 	'
 	if [ "$rcVersion" != "$version" ]; then
@@ -131,6 +132,7 @@ for version in "${versions[@]}"; do
 	ascUrl="${possi[2]}"
 	sha256="${possi[3]}"
 	md5="${possi[4]}"
+	filename="${possi[5]}"
 
 	gpgKey="${gpgKeys[$rcVersion]}"
 	if [ -z "$gpgKey" ]; then
@@ -175,7 +177,7 @@ for version in "${versions[@]}"; do
 			' "$version/$suite/$variant/Dockerfile"
 
             oldFiles=$(find "$version/$suite/$variant/" -name 'docker-php-*')
-            if [ ! -z ${oldFiles} ]; then
+            if [ ! -z "${oldFiles}" ]; then
                 rm ${oldFiles}
             fi
 			cp docker-php-* "$version/$suite/$variant/"
@@ -209,6 +211,7 @@ for version in "${versions[@]}"; do
 			-e 's!%%PHP_VERSION%%!'"$fullVersion"'!' \
 			-e 's!%%GPG_KEYS%%!'"$gpgKey"'!' \
 			-e 's!%%PHP_URL%%!'"$url"'!' \
+			-e 's!%%PHP_FILENAME%%!'"$filename"'!' \
 			-e 's!%%PHP_ASC_URL%%!'"$ascUrl"'!' \
 			-e 's!%%PHP_SHA256%%!'"$sha256"'!' \
 			-e 's!%%PHP_MD5%%!'"$md5"'!' \

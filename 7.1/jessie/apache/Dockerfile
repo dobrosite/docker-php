@@ -27,8 +27,11 @@ ENV PHPIZE_DEPS \
 		re2c
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
+		bzip2 \
 		ca-certificates \
 		curl \
+        git \
+        make \
 		xz-utils \
 	&& rm -r /var/lib/apt/lists/*
 
@@ -113,8 +116,8 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 ENV GPG_KEYS A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 1729F83938DA44E27BA0F4D3DBDB397470D12172
 
 ENV PHP_VERSION 7.1.15
-ENV PHP_URL="https://secure.php.net/get/php-7.1.15.tar.xz/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.15.tar.xz.asc/from/this/mirror"
-ENV PHP_SHA256="0e17192fb43532e4ebaa190ecec9c7e59deea7dadb7dab67b19c2081a68bd817" PHP_MD5=""
+ENV PHP_URL="https://secure.php.net/get/php-7.1.15.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.15.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php-7.1.15.tar.bz2"
+ENV PHP_SHA256="e117a54738e9485de5fc75673d39dbe937dd87f0f9cc9e281960ef9b961adcbd" PHP_MD5=""
 
 RUN set -xe; \
 	\
@@ -134,22 +137,22 @@ RUN set -xe; \
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
-	wget -O php.tar.xz "$PHP_URL"; \
+	wget -O ${PHP_FILENAME} "$PHP_URL"; \
 	\
 	if [ -n "$PHP_SHA256" ]; then \
-		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
+		echo "$PHP_SHA256 *${PHP_FILENAME}" | sha256sum -c -; \
 	fi; \
 	if [ -n "$PHP_MD5" ]; then \
-		echo "$PHP_MD5 *php.tar.xz" | md5sum -c -; \
+		echo "$PHP_MD5 *${PHP_FILENAME}" | md5sum -c -; \
 	fi; \
 	\
 	if [ -n "$PHP_ASC_URL" ]; then \
-		wget -O php.tar.xz.asc "$PHP_ASC_URL"; \
+		wget -O ${PHP_FILENAME}.asc "$PHP_ASC_URL"; \
 		export GNUPGHOME="$(mktemp -d)"; \
 		for key in $GPG_KEYS; do \
 			gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key"; \
 		done; \
-		gpg --batch --verify php.tar.xz.asc php.tar.xz; \
+		gpg --batch --verify ${PHP_FILENAME}.asc ${PHP_FILENAME}; \
 		rm -rf "$GNUPGHOME"; \
 	fi; \
 	\
@@ -162,6 +165,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
 		libsqlite3-dev \
@@ -192,19 +196,56 @@ RUN set -eux; \
 		\
 		--disable-cgi \
 		\
-# --enable-ftp is included here because ftp_ssl_connect() needs ftp to be compiled statically
-# (see https://github.com/docker-library/php/issues/236).
+        --enable-ctype=shared \
+        --enable-dom=shared \
+        --enable-exif=shared \
+        --enable-fileinfo=shared \
+        --enable-filter=shared \
+# Для правильной работы некоторых функций (например ftp_ssl_connect) расширение ftp должно быть
+# собрано статически.
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly
 # (see https://github.com/docker-library/php/issues/195).
+        --enable-hash=shared \
+        --enable-intl=shared \
+        --enable-json=shared \
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions
 # are (since it's a plugin for several extensions, not an extension in itself).
 		--enable-mysqlnd \
+        --enable-pcntl=shared \
+        --enable-pdo=shared \
+        --enable-phar=shared \
+        --enable-posix=shared \
+        --enable-session=shared \
+        --enable-simplexml=shared \
+        --enable-soap=shared \
+        --enable-sockets=shared \
+        --enable-tokenizer=shared \
+        --enable-xmlreader=shared \
+        --enable-xmlwriter=shared \
+        --enable-zip=shared \
 		\
-		--with-curl \
+        --with-bz2=shared \
+		--with-curl=shared \
+        --with-gd=shared \
+        --with-gettext=shared \
+        --with-iconv=shared \
 		--with-libedit \
+        --with-mcrypt=shared \
+        --with-mysql=shared \
+        --with-mysqli=shared \
+# Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
+# статически.
         --with-openssl=/usr \
+        --with-pdo_mysql=shared \
+        --with-pdo_pgsql=shared \
+        --with-pdo_sqlite3=shared \
+        --with-pgsql=shared \
+        --with-readline=shared \
+        --with-sqlite=shared \
+        --with-tidy=shared \
+        --with-xsl=shared \
 		--with-zlib \
 		\
 # bundled pcre does not support JIT on s390x
@@ -239,6 +280,13 @@ RUN set -eux; \
 # https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
 	rm -rf /tmp/pear ~/.pearrc
+
+RUN set -x \
+    && wget https://getcomposer.org/installer -O - -q | \
+        php \
+            -d extension=json.so -d extension=phar.so -d extension=hash.so \
+            -d extension=mbstring.so -- \
+        --force --install-dir=/usr/local/bin --filename=composer
 
 ENTRYPOINT ["docker-php-entrypoint"]
 WORKDIR /var/www/html

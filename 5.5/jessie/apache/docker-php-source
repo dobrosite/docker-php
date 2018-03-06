@@ -18,7 +18,14 @@ case "$1" in
 	extract)
 		mkdir -p "$dir"
 		if [ ! -f "$dir/.docker-extracted" ]; then
-			tar -Jxf /usr/src/php.tar.xz -C "$dir" --strip-components=1
+		    if [ -f /usr/src/php.tar.xz ]; then
+			    tar -Jxf /usr/src/php.tar.xz -C "$dir" --strip-components=1
+            elif [ -f /usr/src/php.tar.bz2 ]; then
+			    tar -xfj /usr/src/php.tar.bz2 -C "$dir" --strip-components=1
+            else
+                echo 'PHP source tarball not found!'
+                exit 129
+            fi
 			touch "$dir/.docker-extracted"
 		fi
 		;;

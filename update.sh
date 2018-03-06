@@ -176,7 +176,7 @@ for version in "${versions[@]}"; do
 				ia && ac == 1 { system("cat Dockerfile." variant ".block-" ab) }
 			' "$version/$suite/$variant/Dockerfile"
 
-            oldFiles=$(find "$version/$suite/$variant/" -name 'docker-php-*')
+            oldFiles=$(find "$version/$suite/$variant/" -name 'docker-*')
             if [ ! -z "${oldFiles}" ]; then
                 rm ${oldFiles}
             fi

@@ -167,12 +167,14 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+	    lemon \
 # Для расширения bzip2.
 		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
 		libicu-dev \
 		libmcrypt-dev \
+		libmysqld-dev \
 # Для поддержки PNG расширением gd.
 		libpng-dev \
 # Для поддержки PostgreSQL.
@@ -254,8 +256,10 @@ RUN set -eux; \
         --with-pdo_mysql=shared \
         --with-pdo_pgsql=shared \
         --with-pdo_sqlite=shared \
+        --with-pdo_sqlite3=shared \
         --with-pgsql=shared \
         --with-readline=shared \
+        --with-sqlite=shared \
         --with-sqlite3=shared \
         --with-tidy=shared \
         --with-xsl=shared \

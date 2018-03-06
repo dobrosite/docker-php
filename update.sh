@@ -197,6 +197,13 @@ for version in "${versions[@]}"; do
 				# В Debian Stretch libmcrypt-dev не требуется для сборки mcrypt.
 				sed -ri '/libmcrypt-dev/d' "$version/$suite/$variant/Dockerfile"
 			fi
+			if [ "$majorVersion" -gt '5' ] || [ "$majorVersion" = '5' -a "$minorVersion" -gt '3' ]; then
+				# Начиная с PHP 5.4 libmysqld-dev и lemon уже не нужны.
+				sed -ri '/libmysqld-dev/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/lemon/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/--with-pdo_sqlite3/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/--with-sqlite\W/d' "$version/$suite/$variant/Dockerfile"
+			fi
 			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium
 				sed -ri '/sodium/d' "$version/$suite/$variant/Dockerfile"

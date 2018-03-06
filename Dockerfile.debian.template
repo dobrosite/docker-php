@@ -105,6 +105,8 @@ RUN set -eux; \
 		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
+		libicu-dev \
+		libmcrypt-dev \
 # Для поддержки PNG расширением gd.
 		libpng-dev \
 # Для поддержки PostgreSQL.

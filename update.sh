@@ -190,6 +190,12 @@ for version in "${versions[@]}"; do
 				sed -ri '/argon2/d' "$version/$suite/$variant/Dockerfile"
 				# Alpine 3.7+ _should_ include an "argon2-dev" package, but we should cross that bridge when we come to it
 			fi
+			if [ ${suite} = 'stretch' ]; then
+				# В Debian Stretch libicu-dev не требуется для сборки intl.
+				sed -ri '/libicu-dev/d' "$version/$suite/$variant/Dockerfile"
+				# В Debian Stretch libmcrypt-dev не требуется для сборки mcrypt.
+				sed -ri '/libmcrypt-dev/d' "$version/$suite/$variant/Dockerfile"
+			fi
 			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium
 				sed -ri '/sodium/d' "$version/$suite/$variant/Dockerfile"

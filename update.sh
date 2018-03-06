@@ -211,7 +211,7 @@ for version in "${versions[@]}"; do
 			-e 's!%%PHP_VERSION%%!'"$fullVersion"'!' \
 			-e 's!%%GPG_KEYS%%!'"$gpgKey"'!' \
 			-e 's!%%PHP_URL%%!'"$url"'!' \
-			-e 's!%%PHP_FILENAME%%!'"$filename"'!' \
+			-e 's!%%PHP_FILENAME%%!php.tar.'"$(expr match ${filename} '.*\.\(.*\)')"'!' \
 			-e 's!%%PHP_ASC_URL%%!'"$ascUrl"'!' \
 			-e 's!%%PHP_SHA256%%!'"$sha256"'!' \
 			-e 's!%%PHP_MD5%%!'"$md5"'!' \

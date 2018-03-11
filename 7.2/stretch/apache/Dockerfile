@@ -224,7 +224,7 @@ RUN set -eux; \
 # are (since it's a plugin for several extensions, not an extension in itself).
 		--enable-mysqlnd \
         --enable-pcntl=shared \
-        --enable-pdo=shared \
+        --enable-pdo \
         --enable-phar=shared \
         --enable-posix=shared \
         --enable-session=shared \

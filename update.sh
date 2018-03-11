@@ -180,7 +180,8 @@ for version in "${versions[@]}"; do
             if [ ! -z "${oldFiles}" ]; then
                 rm ${oldFiles}
             fi
-			cp docker-php-* "$version/$suite/$variant/"
+			cp docker-* "$version/$suite/$variant/"
+			cp php*.ini "$version/$suite/$variant/"
 
 			if [ "$alpineVer" = '3.4' ]; then
 				sed -ri 's!libressl!openssl!g' "$version/$suite/$variant/Dockerfile"
@@ -189,6 +190,19 @@ for version in "${versions[@]}"; do
 				# argon2 password hashing is only supported in 7.2+ and stretch+
 				sed -ri '/argon2/d' "$version/$suite/$variant/Dockerfile"
 				# Alpine 3.7+ _should_ include an "argon2-dev" package, but we should cross that bridge when we come to it
+			fi
+			if [ ${suite} = 'stretch' ]; then
+				# В Debian Stretch libicu-dev не требуется для сборки intl.
+				sed -ri '/libicu-dev/d' "$version/$suite/$variant/Dockerfile"
+				# В Debian Stretch libmcrypt-dev не требуется для сборки mcrypt.
+				sed -ri '/libmcrypt-dev/d' "$version/$suite/$variant/Dockerfile"
+			fi
+			if [ "$majorVersion" -gt '5' ] || [ "$majorVersion" = '5' -a "$minorVersion" -gt '3' ]; then
+				# Начиная с PHP 5.4 libmysqld-dev и lemon уже не нужны.
+				sed -ri '/libmysqld-dev/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/lemon/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/--with-pdo_sqlite3/d' "$version/$suite/$variant/Dockerfile"
+				sed -ri '/--with-sqlite\W/d' "$version/$suite/$variant/Dockerfile"
 			fi
 			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium

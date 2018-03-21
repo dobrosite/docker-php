@@ -43,7 +43,7 @@ cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 scripts=(
     'docker-php-entrypoint'
     'docker-php-ext-configure'
-    'docker-php-ext-enable'
+#    'docker-php-ext-enable' У нас используется изменённая версия.
     'docker-php-ext-install'
 #    'docker-php-source' У нас используется изменённая версия.
 )

@@ -209,25 +209,35 @@ RUN set -eux; \
 		\
 		--disable-cgi \
 		\
-        --enable-ctype=shared \
-        --enable-dom=shared \
-        --enable-exif=shared \
-        --enable-fileinfo=shared \
-        --enable-filter=shared \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) расширение ftp должно быть
 # собрано статически.
 		--enable-ftp \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly
 # (see https://github.com/docker-library/php/issues/195).
-        --enable-hash=shared \
-        --enable-intl=shared \
-        --enable-json=shared \
 		--enable-mbstring \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions
 # are (since it's a plugin for several extensions, not an extension in itself).
 		--enable-mysqlnd \
-        --enable-pcntl=shared \
         --enable-pdo \
+		--with-libedit \
+# Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
+# статически.
+        --with-openssl=/usr \
+# https://wiki.php.net/rfc/argon2_password_hash (7.2+).
+		--with-password-argon2 \
+# https://wiki.php.net/rfc/libsodium.
+		--with-sodium \
+		--with-zlib \
+		\
+        --enable-ctype=shared \
+        --enable-dom=shared \
+        --enable-exif=shared \
+        --enable-fileinfo=shared \
+        --enable-filter=shared \
+        --enable-hash=shared \
+        --enable-intl=shared \
+        --enable-json=shared \
+        --enable-pcntl=shared \
         --enable-phar=shared \
         --enable-posix=shared \
         --enable-session=shared \
@@ -238,23 +248,14 @@ RUN set -eux; \
         --enable-xmlreader=shared \
         --enable-xmlwriter=shared \
         --enable-zip=shared \
-# https://wiki.php.net/rfc/argon2_password_hash (7.2+).
-		--with-password-argon2 \
-# https://wiki.php.net/rfc/libsodium.
-		--with-sodium \
-		\
         --with-bz2=shared \
 		--with-curl=shared \
         --with-gd=shared \
         --with-gettext=shared \
         --with-iconv=shared \
-		--with-libedit \
         --with-mcrypt=shared \
         --with-mysql=shared \
         --with-mysqli=shared \
-# Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
-# статически.
-        --with-openssl=/usr \
         --with-pdo_mysql=shared \
         --with-pdo_pgsql=shared \
         --with-pdo_sqlite=shared \
@@ -263,7 +264,6 @@ RUN set -eux; \
         --with-sqlite3=shared \
         --with-tidy=shared \
         --with-xsl=shared \
-		--with-zlib \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT

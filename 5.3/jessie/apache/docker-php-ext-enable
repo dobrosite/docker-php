@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+# Расширения, с которыми скомпилирован PHP. Их не надо (и нельзя) подключать с помощью
+# этой команды.
+BUILTIN_EXTENSIONS='ftp mbstring mysqlnd pdo openssl password-argon2 sodium zlib'
+
 cd "$(php -r 'echo ini_get("extension_dir");')"
 
 usage() {
@@ -42,12 +46,18 @@ for module; do
 	if [ -z "$module" ]; then
 		continue
 	fi
+	for builtin in ${BUILTIN_EXTENSIONS}; do
+	    if [ "${builtin}" = "${module}" ]; then
+	        echo "\"${module}\" is a builtin extension. Skipping."
+	        continue 2
+	    fi
+	done
 	if [ -f "$module.so" ] && ! [ -f "$module" ]; then
 		# allow ".so" to be optional
 		module="$module.so"
 	fi
 	if ! [ -f "$module" ]; then
-		echo >&2 "error: $(readlink -f "$module") does not exist"
+		echo >&2 "error: \"${module}\" does not exist!"
 		echo >&2
 		usage >&2
 		exit 1
@@ -56,8 +66,8 @@ for module; do
 done
 
 if [ -z "$modules" ]; then
-	usage >&2
-	exit 1
+	echo "No extensions to enable. Exiting."
+	exit 0
 fi
 
 pm='unknown'

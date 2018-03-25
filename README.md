@@ -85,7 +85,7 @@ services:
   - [mysqlnd](http://php.net/mysqlnd) (скомпилировано статически)
   - [openssl](http://php.net/openssl) (скомпилировано статически)
   - [pcntl](http://php.net/pcntl)
-  - [pcre](http://php.net/pcre)
+  - [pcre](http://php.net/pcre) (скомпилировано статически)
   - [pdo](http://php.net/pdo) (скомпилировано статически)
   - [pdo_mysql](http://php.net/pdo_mysql)
   - [pdo_pgsql](http://php.net/pdo_pgsql)

@@ -29,8 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 		ca-certificates \
 		curl \
-        git \
-        make \
+		git \
+		make \
+		wget \
 		xz-utils \
 	&& rm -r /var/lib/apt/lists/*
 
@@ -122,9 +123,7 @@ ENV PHP_SHA256="4a735aac0ba764dd8208ea29007d3916396c5292e003ba8d3bec49edcdd5bf92
 
 RUN set -xe; \
 	\
-	fetchDeps=' \
-		wget \
-	'; \
+	fetchDeps=''; \
 	if ! command -v gpg > /dev/null; then \
 		fetchDeps="$fetchDeps \
 			dirmngr \
@@ -212,6 +211,10 @@ RUN set -eux; \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) расширение ftp должно быть
 # собрано статически.
 		--enable-ftp \
+# Требуется для Composer.
+		--enable-hash \
+# Требуется для Composer.
+		--enable-json \
 # --enable-mbstring is included here because otherwise there's no way to get pecl to use it properly
 # (see https://github.com/docker-library/php/issues/195).
 		--enable-mbstring \
@@ -219,6 +222,8 @@ RUN set -eux; \
 # are (since it's a plugin for several extensions, not an extension in itself).
 		--enable-mysqlnd \
         --enable-pdo \
+# Требуется для Composer.
+		--enable-phar \
 		--with-libedit \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
 # статически.
@@ -229,41 +234,38 @@ RUN set -eux; \
 		--with-sodium \
 		--with-zlib \
 		\
-        --enable-ctype=shared \
-        --enable-dom=shared \
-        --enable-exif=shared \
-        --enable-fileinfo=shared \
-        --enable-filter=shared \
-        --enable-hash=shared \
-        --enable-intl=shared \
-        --enable-json=shared \
-        --enable-pcntl=shared \
-        --enable-phar=shared \
-        --enable-posix=shared \
-        --enable-session=shared \
-        --enable-simplexml=shared \
-        --enable-soap=shared \
-        --enable-sockets=shared \
-        --enable-tokenizer=shared \
-        --enable-xmlreader=shared \
-        --enable-xmlwriter=shared \
-        --enable-zip=shared \
-        --with-bz2=shared \
+		--enable-ctype=shared \
+		--enable-dom=shared \
+		--enable-exif=shared \
+		--enable-fileinfo=shared \
+		--enable-filter=shared \
+		--enable-intl=shared \
+		--enable-pcntl=shared \
+		--enable-posix=shared \
+		--enable-session=shared \
+		--enable-simplexml=shared \
+		--enable-soap=shared \
+		--enable-sockets=shared \
+		--enable-tokenizer=shared \
+		--enable-xmlreader=shared \
+		--enable-xmlwriter=shared \
+		--enable-zip=shared \
+		--with-bz2=shared \
 		--with-curl=shared \
-        --with-gd=shared \
-        --with-gettext=shared \
-        --with-iconv=shared \
-        --with-mcrypt=shared \
-        --with-mysql=shared \
-        --with-mysqli=shared \
-        --with-pdo_mysql=shared \
-        --with-pdo_pgsql=shared \
-        --with-pdo_sqlite=shared \
-        --with-pgsql=shared \
-        --with-readline=shared \
-        --with-sqlite3=shared \
-        --with-tidy=shared \
-        --with-xsl=shared \
+		--with-gd=shared \
+		--with-gettext=shared \
+		--with-iconv=shared \
+		--with-mcrypt=shared \
+		--with-mysql=shared \
+		--with-mysqli=shared \
+		--with-pdo_mysql=shared \
+		--with-pdo_pgsql=shared \
+		--with-pdo_sqlite=shared \
+		--with-pgsql=shared \
+		--with-readline=shared \
+		--with-sqlite3=shared \
+		--with-tidy=shared \
+		--with-xsl=shared \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
@@ -298,10 +300,8 @@ RUN set -eux; \
 	pecl update-channels; \
 	rm -rf /tmp/pear ~/.pearrc
 
-RUN set -x \
-    && wget https://getcomposer.org/installer -O - -q | \
-        php -d extension=json.so -d extension=phar.so -d extension=hash.so \
-        -- --force --install-dir=/usr/local/bin --filename=composer
+RUN wget https://getcomposer.org/installer -O - -q \
+		| php -- --force --install-dir=/usr/local/bin --filename=composer
 
 ENTRYPOINT ["docker-php-entrypoint"]
 WORKDIR /var/www/html

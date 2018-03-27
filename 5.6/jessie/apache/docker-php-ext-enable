@@ -1,9 +1,8 @@
 #!/bin/sh
 set -e
 
-# Расширения, с которыми скомпилирован PHP. Их не надо (и нельзя) подключать с помощью
-# этой команды.
-BUILTIN_EXTENSIONS='ftp mbstring mysqlnd pdo openssl password-argon2 sodium zlib'
+# Расширения, скомпилированные статически. Их не надо (и нельзя) подключать с помощью этой команды.
+BUILTIN_EXTENSIONS=$(php -r 'echo strtolower(implode(" ", get_loaded_extensions()));')
 
 cd "$(php -r 'echo ini_get("extension_dir");')"
 

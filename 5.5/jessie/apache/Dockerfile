@@ -296,6 +296,9 @@ RUN set -eux; \
 	pecl update-channels; \
 	rm -rf /tmp/pear ~/.pearrc
 
+## Устанавливаем xdebug.
+RUN pecl install --force xdebug-2.5.5
+
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer
 

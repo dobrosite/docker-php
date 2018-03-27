@@ -32,6 +32,7 @@ services:
             FILE_OWNER_UID: 1000
             APACHE_MODULES: env rewrite
             PHP_EXTENSIONS: iconv mstring pdo_mysql
+            PHP_INI_SETTINGS: memory_limit=-1 date.timezone=Europe/Moscow
         ports:
             - '80:80'
 ```
@@ -44,6 +45,7 @@ services:
   которые следует подключить. Имена должны указываться без приставки `mod_`.
 - `FILE_OWNER_UID` — UID для пользователя `www-data`, от которого работает веб-сервер.
 - `PHP_EXTENSIONS` — разделённый пробелами список расширений PHP, которые следует подключить.
+- `PHP_INI_SETTINGS` — разделённый пробелами список параметров php.ini, которые следует использовать.
 
 ### Файлы настройки
 

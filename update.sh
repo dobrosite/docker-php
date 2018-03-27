@@ -37,21 +37,6 @@ declare -A gpgKeys=(
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-##
-## Обновляем инструментарий из официального хранилища.
-##
-scripts=(
-    'docker-php-entrypoint'
-    'docker-php-ext-configure'
-#    'docker-php-ext-enable' У нас используется изменённая версия.
-    'docker-php-ext-install'
-#    'docker-php-source' У нас используется изменённая версия.
-)
-for script in ${scripts[*]}; do
-    curl -sSL "https://raw.githubusercontent.com/docker-library/php/master/${script}" -o ${script}
-    chmod +x ${script}
-done
-
 versions=( "$@" )
 if [ ${#versions[@]} -eq 0 ]; then
 	versions=( */ )

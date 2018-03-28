@@ -31,6 +31,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		curl \
 		git \
 		make \
+		nmap \
+		telnet \
 		wget \
 		xz-utils \
 	&& rm -r /var/lib/apt/lists/*

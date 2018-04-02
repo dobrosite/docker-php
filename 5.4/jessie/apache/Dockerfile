@@ -226,13 +226,13 @@ RUN set -eux; \
 # --enable-mysqlnd is included here because it's harder to compile after the fact than extensions
 # are (since it's a plugin for several extensions, not an extension in itself).
 		--enable-mysqlnd \
-        --enable-pdo \
+		--enable-pdo \
 # Требуется для Composer.
 		--enable-phar \
 		--with-libedit \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
 # статически.
-        --with-openssl=/usr \
+		--with-openssl=/usr \
 		--with-zlib \
 		\
 		--enable-ctype=shared \

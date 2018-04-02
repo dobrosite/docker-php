@@ -119,9 +119,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
 
-ENV PHP_VERSION 7.2.3
-ENV PHP_URL="https://secure.php.net/get/php-7.2.3.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.3.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="4a735aac0ba764dd8208ea29007d3916396c5292e003ba8d3bec49edcdd5bf92" PHP_MD5=""
+ENV PHP_VERSION 7.2.4
+ENV PHP_URL="https://secure.php.net/get/php-7.2.4.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.4.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="11658a0d764dc94023b9fb60d4b5eb75d438ad17981efe70abb0d0d09a447ef3" PHP_MD5=""
 
 RUN set -xe; \
 	\

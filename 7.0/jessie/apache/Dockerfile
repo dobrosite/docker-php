@@ -174,6 +174,8 @@ RUN set -eux; \
 		libcurl4-openssl-dev \
 		libedit-dev \
 		libicu-dev \
+# Для поддержки JPEG расширением gd.
+		libjpeg-dev \
 		libmcrypt-dev \
 # Для поддержки PNG расширением gd.
 		libpng-dev \
@@ -254,6 +256,7 @@ RUN set -eux; \
 		--with-gd=shared \
 		--with-gettext=shared \
 		--with-iconv=shared \
+		--with-jpeg-dir=/usr/local \
 		--with-mcrypt=shared \
 		--with-mysql=shared \
 		--with-mysqli=shared \

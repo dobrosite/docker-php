@@ -14,7 +14,7 @@ RUN set -eux; \
 		echo 'Pin-Priority: -1'; \
 	} > /etc/apt/preferences.d/no-debian-php
 
-# Общие зависимости
+# Зависимости для выполенния phpize.
 ENV PHPIZE_DEPS \
 		autoconf \
 		dpkg-dev \
@@ -25,6 +25,7 @@ ENV PHPIZE_DEPS \
 		make \
 		pkg-config \
 		re2c
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 		ca-certificates \

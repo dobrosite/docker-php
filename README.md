@@ -101,6 +101,7 @@ services:
   - [simplexml](http://php.net/simplexml)
   - [soap](http://php.net/soap)
   - [sockets](http://php.net/sockets)
+  - [sodium](http://php.net/sodium) (PHP 7.2+)
   - [SPL](http://php.net/spl)
   - [sqlite](http://php.net/sqlite)
   - [tidy](http://php.net/tidy)

@@ -14,7 +14,7 @@ RUN set -eux; \
 		echo 'Pin-Priority: -1'; \
 	} > /etc/apt/preferences.d/no-debian-php
 
-# Общие зависимости
+# Зависимости для выполенния phpize.
 ENV PHPIZE_DEPS \
 		autoconf \
 		dpkg-dev \
@@ -25,6 +25,7 @@ ENV PHPIZE_DEPS \
 		make \
 		pkg-config \
 		re2c
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 		ca-certificates \
@@ -232,8 +233,6 @@ RUN set -eux; \
         --with-openssl=/usr \
 # https://wiki.php.net/rfc/argon2_password_hash (7.2+).
 		--with-password-argon2 \
-# https://wiki.php.net/rfc/libsodium.
-		--with-sodium \
 		--with-zlib \
 		\
 		--enable-ctype=shared \
@@ -265,6 +264,8 @@ RUN set -eux; \
 		--with-pdo_sqlite=shared \
 		--with-pgsql=shared \
 		--with-readline=shared \
+# https://wiki.php.net/rfc/libsodium.
+		--with-sodium=shared \
 		--with-sqlite3=shared \
 		--with-tidy=shared \
 		--with-xsl=shared \

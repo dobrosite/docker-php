@@ -49,6 +49,8 @@ RUN apt-get update \
 		apache2 \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN usermod --shell $(which bash) www-data
+
 ENV APACHE_CONFDIR /etc/apache2
 ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
 

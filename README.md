@@ -116,8 +116,14 @@ services:
   - [xdebug](https://xdebug.org/) (версия зависит от версии PHP)
 - [PEAR](http://pear.php.net/)
 - [Composer](https://getcomposer.org/)
+- [cURL](https://curl.haxx.se/docs/tooldocs.html)
 - [Git](https://git-scm.com)
 - [GNU Make](https://www.gnu.org/software/make/manual/make.html)
+- [GNU Wget](https://www.gnu.org/software/wget/)
+- [nmap](https://nmap.org/)
+- [npm](https://docs.npmjs.com/)
+- [telnet](http://manpages.org/telnet)
+
 
 ### Образы *-apache
 

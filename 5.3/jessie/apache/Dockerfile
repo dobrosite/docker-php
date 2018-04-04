@@ -30,12 +30,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 		ca-certificates \
 		curl \
+		dirmngr \
 		git \
+		gnupg \
 		make \
 		nmap \
 		telnet \
 		wget \
 		xz-utils \
+	&& rm -r /var/lib/apt/lists/*
+
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
+	&& apt-get update && apt-get install -y --no-install-recommends \
+		nodejs \
 	&& rm -r /var/lib/apt/lists/*
 
 ENV PHP_INI_DIR /usr/local/etc/php
@@ -128,17 +135,6 @@ ENV PHP_SHA256="c4e1cf6972b2a9c7f2777a18497d83bf713cdbecabb65d3ff62ba441aebb0091
 
 RUN set -xe; \
 	\
-	fetchDeps=''; \
-	if ! command -v gpg > /dev/null; then \
-		fetchDeps="$fetchDeps \
-			dirmngr \
-			gnupg \
-		"; \
-	fi; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends $fetchDeps; \
-	rm -rf /var/lib/apt/lists/*; \
-	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
@@ -159,9 +155,7 @@ RUN set -xe; \
 		done; \
 		gpg --batch --verify ${PHP_FILENAME}.asc ${PHP_FILENAME}; \
 		rm -rf "$GNUPGHOME"; \
-	fi; \
-	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps
+	fi;
 
 COPY docker-php-* /usr/local/bin/
 COPY php*.ini /usr/local/etc/php/

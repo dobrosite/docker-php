@@ -229,6 +229,8 @@ RUN set -eux; \
 # Требуется для Composer.
 		--enable-phar \
 		--with-libedit \
+# https://github.com/docker-library/php/issues/439
+		--with-mhash \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
 # статически.
 		--with-openssl=/usr \

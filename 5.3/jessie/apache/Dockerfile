@@ -209,6 +209,8 @@ RUN set -eux; \
 		--build="$gnuArch" \
 		--with-config-file-path="$PHP_INI_DIR" \
 		--with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+# Неправильные флаги должны прерывать сборку, чтобы их легче было обнаружить.
+		--enable-option-checking=fatal \
 		\
 		--disable-cgi \
 		\

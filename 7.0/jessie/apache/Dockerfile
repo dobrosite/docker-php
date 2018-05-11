@@ -259,7 +259,6 @@ RUN set -eux; \
 		--with-iconv=shared \
 		--with-jpeg-dir=/usr/local \
 		--with-mcrypt=shared \
-		--with-mysql=shared \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \

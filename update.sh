@@ -195,6 +195,11 @@ for version in "${versions[@]}"; do
 				sed -ri '/sodium/d' "${Dockerfile}"
 			fi
 
+			if [ "$majorVersion" = '7' ] || [ "$majorVersion" -gt '7' ]; then
+				# Расширение mysql удалено в PHP 7.0.
+				sed -ri '/--with-mysql=/d' "${Dockerfile}"
+			fi
+
 			if [ "${majorVersion}" -lt 7 ]; then
 				if [ "${minorVersion}" -lt 4 ]; then
 					sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.2.7/g' "${Dockerfile}"

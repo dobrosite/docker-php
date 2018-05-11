@@ -195,9 +195,14 @@ for version in "${versions[@]}"; do
 				sed -ri '/sodium/d' "${Dockerfile}"
 			fi
 
-			if [ "$majorVersion" = '7' ] || [ "$majorVersion" -gt '7' ]; then
+			if [ "$majorVersion" -gt '5' ]; then
 				# Расширение mysql удалено в PHP 7.0.
 				sed -ri '/--with-mysql=/d' "${Dockerfile}"
+			fi
+
+			if [ "$majorVersion" -gt '7' ] || [ "$majorVersion" = '7' -a "$minorVersion" -gt '1' ]; then
+				# Начиная с PHP 7.2 расширения mcrypt нет.
+				sed -ri '/mcrypt/d' "${Dockerfile}"
 			fi
 
 			if [ "${majorVersion}" -lt 7 ]; then

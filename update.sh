@@ -180,8 +180,6 @@ for version in "${versions[@]}"; do
 			if [ ${suite} = 'stretch' ]; then
 				# В Debian Stretch libicu-dev не требуется для сборки intl.
 				sed -ri '/libicu-dev/d' "${Dockerfile}"
-				# В Debian Stretch libmcrypt-dev не требуется для сборки mcrypt.
-				sed -ri '/libmcrypt-dev/d' "${Dockerfile}"
 			fi
 			if [ "$majorVersion" -gt '5' ] || [ "$majorVersion" = '5' -a "$minorVersion" -gt '3' ]; then
 				# Начиная с PHP 5.4 libmysqld-dev и lemon уже не нужны.
@@ -200,9 +198,11 @@ for version in "${versions[@]}"; do
 				sed -ri '/--with-mysql=/d' "${Dockerfile}"
 			fi
 
+			# PHP >= 7.2
 			if [ "$majorVersion" -gt '7' ] || [ "$majorVersion" = '7' -a "$minorVersion" -gt '1' ]; then
 				# Начиная с PHP 7.2 расширения mcrypt нет.
 				sed -ri '/mcrypt/d' "${Dockerfile}"
+				sed -ri '/libmcrypt-dev/d' "${Dockerfile}"
 			fi
 
 			if [ "${majorVersion}" -lt 7 ]; then

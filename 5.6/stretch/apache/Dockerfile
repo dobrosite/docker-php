@@ -3,7 +3,7 @@
 ## Не меняйте его вручную — он будет перезаписан.
 ##
 
-FROM debian:jessie
+FROM debian:stretch-slim
 
 # Запрещаем установку пакетов PHP из дистрибутива Debian.
 # https://github.com/docker-library/php/pull/542
@@ -128,11 +128,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
-ENV GPG_KEYS 1A4E8B7277C42E53DBA9C7B9BCAA30EA9C0D5763 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3
+ENV GPG_KEYS 0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3
 
-ENV PHP_VERSION 7.0.30
-ENV PHP_URL="https://secure.php.net/get/php-7.0.30.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.0.30.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="213f38400c239b8fab2f6f59d6f4d4bd463d0a75bd4edf723dd4d5fea8850b50" PHP_MD5=""
+ENV PHP_VERSION 5.6.36
+ENV PHP_URL="https://secure.php.net/get/php-5.6.36.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-5.6.36.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="626a0e3f5d8a0e686a2b930f0dd3a0601fe3dcb5e43dd0e8c3fab631e64e172a" PHP_MD5=""
 
 RUN set -xe; \
 	\
@@ -170,7 +170,6 @@ RUN set -eux; \
 		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
-		libicu-dev \
 # Для поддержки JPEG расширением gd.
 		libjpeg-dev \
 		libmcrypt-dev \
@@ -259,6 +258,7 @@ RUN set -eux; \
 		--with-iconv=shared \
 		--with-jpeg-dir=/usr/local \
 		--with-mcrypt=shared \
+		--with-mysql=shared \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \
@@ -303,7 +303,7 @@ RUN set -eux; \
 	rm -rf /tmp/pear ~/.pearrc
 
 ## Устанавливаем xdebug.
-RUN pecl install --force xdebug
+RUN pecl install --force xdebug-2.5.5
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

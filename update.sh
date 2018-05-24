@@ -169,20 +169,16 @@ for version in "${versions[@]}"; do
 			cp docker-* "$version/$suite/$variant/"
 			cp php*.ini "$version/$suite/$variant/"
 
-			if [ "$alpineVer" = '3.4' ]; then
-				sed -ri 's!libressl!openssl!g' "${Dockerfile}"
-			fi
 			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$suite" = 'jessie' ]; then
 				# argon2 password hashing is only supported in 7.2+ and stretch+
 				sed -ri '/argon2/d' "${Dockerfile}"
-				# Alpine 3.7+ _should_ include an "argon2-dev" package, but we should cross that bridge when we come to it
 			fi
 
 			if [ ${suite} = 'stretch' ]; then
 				# В Debian Stretch libicu-dev не требуется для сборки intl.
 				sed -ri '/libicu-dev/d' "${Dockerfile}"
 
-			cd	# PHP 5.x
+				# PHP 5.x
 				if [ "$majorVersion" = '5' ]; then
 					sed -ri 's!libssl-dev!libssl1.0-dev!g' "${Dockerfile}"
 				fi

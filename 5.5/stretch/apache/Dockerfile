@@ -3,7 +3,7 @@
 ## Не меняйте его вручную — он будет перезаписан.
 ##
 
-FROM debian:jessie
+FROM debian:stretch-slim
 
 # Запрещаем установку пакетов PHP из дистрибутива Debian.
 # https://github.com/docker-library/php/pull/542
@@ -170,7 +170,6 @@ RUN set -eux; \
 		libbz2-dev \
 		libcurl4-openssl-dev \
 		libedit-dev \
-		libicu-dev \
 # Для поддержки JPEG расширением gd.
 		libjpeg-dev \
 		libmcrypt-dev \
@@ -179,7 +178,7 @@ RUN set -eux; \
 # Для поддержки PostgreSQL.
 		libpq-dev \
 		libsqlite3-dev \
-		libssl-dev \
+		libssl1.0-dev \
 # Для расширения tidy.
 		libtidy-dev \
 		libxml2-dev \

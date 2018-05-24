@@ -178,7 +178,7 @@ RUN set -eux; \
 # Для поддержки PostgreSQL.
 		libpq-dev \
 		libsqlite3-dev \
-		libssl-dev \
+		libssl1.0-dev \
 # Для расширения tidy.
 		libtidy-dev \
 		libxml2-dev \

@@ -177,10 +177,18 @@ for version in "${versions[@]}"; do
 				sed -ri '/argon2/d' "${Dockerfile}"
 				# Alpine 3.7+ _should_ include an "argon2-dev" package, but we should cross that bridge when we come to it
 			fi
+
 			if [ ${suite} = 'stretch' ]; then
 				# В Debian Stretch libicu-dev не требуется для сборки intl.
 				sed -ri '/libicu-dev/d' "${Dockerfile}"
+
+			cd	# PHP 5.x
+				if [ "$majorVersion" = '5' ]; then
+					sed -ri 's!libssl-dev!libssl1.0-dev!g' "${Dockerfile}"
+				fi
 			fi
+
+			# PHP >= 5.4
 			if [ "$majorVersion" -gt '5' ] || [ "$majorVersion" = '5' -a "$minorVersion" -gt '3' ]; then
 				# Начиная с PHP 5.4 libmysqld-dev и lemon уже не нужны.
 				sed -ri '/libmysqld-dev/d' "${Dockerfile}"
@@ -188,11 +196,14 @@ for version in "${versions[@]}"; do
 				sed -ri '/--with-pdo_sqlite3/d' "${Dockerfile}"
 				sed -ri '/--with-sqlite\W/d' "${Dockerfile}"
 			fi
+
+			# PHP < 7.2
 			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium
 				sed -ri '/sodium/d' "${Dockerfile}"
 			fi
 
+			# PHP >= 7.0
 			if [ "$majorVersion" -gt '5' ]; then
 				# Расширение mysql удалено в PHP 7.0.
 				sed -ri '/--with-mysql=/d' "${Dockerfile}"

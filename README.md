@@ -122,6 +122,7 @@ services:
 - [GNU Wget](https://www.gnu.org/software/wget/)
 - [nmap](https://nmap.org/)
 - [npm](https://docs.npmjs.com/)
+- [OpenSSH](http://www.openssh.com/) (клиент)
 - [telnet](http://manpages.org/telnet)
 
 

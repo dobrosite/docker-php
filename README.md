@@ -123,6 +123,7 @@ services:
 - [nmap](https://nmap.org/)
 - [npm](https://docs.npmjs.com/)
 - [OpenSSH](http://www.openssh.com/) (клиент)
+- [sshpass](https://sourceforge.net/projects/sshpass/)
 - [telnet](http://manpages.org/telnet)
 
 

@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		make \
 		nmap \
 		openssh-client \
+		sshpass \
 		telnet \
 		unzip \
 		wget \
@@ -153,7 +154,7 @@ RUN set -xe; \
 		wget -O ${PHP_FILENAME}.asc "$PHP_ASC_URL"; \
 		export GNUPGHOME="$(mktemp -d)"; \
 		for key in $GPG_KEYS; do \
-			gpg --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key"; \
+			gpg --no-tty --keyserver ipv4.pool.sks-keyservers.net --recv-keys "$key"; \
 		done; \
 		gpg --batch --verify ${PHP_FILENAME}.asc ${PHP_FILENAME}; \
 		rm -rf "$GNUPGHOME"; \

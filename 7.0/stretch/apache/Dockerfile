@@ -5,6 +5,31 @@
 
 FROM debian:stretch-slim
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates \
+		curl \
+		dirmngr \
+		gnupg \
+		iproute2 \
+		openssh-client \
+		telnet \
+		unzip \
+		wget \
+		xz-utils \
+	&& rm -r /var/lib/apt/lists/*
+
+RUN apt-get update \
+	&& echo nullmailer shared/mailname string me | debconf-set-selections \
+	&& DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install nullmailer \
+	&& rm -r /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		git \
+		make \
+		nmap \
+		sshpass \
+	&& rm -r /var/lib/apt/lists/*
+
 # Запрещаем установку пакетов PHP из дистрибутива Debian.
 # https://github.com/docker-library/php/pull/542
 RUN set -eux; \
@@ -26,22 +51,7 @@ ENV PHPIZE_DEPS \
 		pkg-config \
 		re2c
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		$PHPIZE_DEPS \
-		ca-certificates \
-		curl \
-		dirmngr \
-		git \
-		gnupg \
-		iproute2 \
-		make \
-		nmap \
-		openssh-client \
-		sshpass \
-		telnet \
-		unzip \
-		wget \
-		xz-utils \
+RUN apt-get update && apt-get install -y --no-install-recommends $PHPIZE_DEPS \
 	&& rm -r /var/lib/apt/lists/*
 
 RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \

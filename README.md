@@ -33,6 +33,7 @@ services:
             APACHE_MODULES: env rewrite
             PHP_EXTENSIONS: iconv mstring pdo_mysql
             PHP_INI_SETTINGS: memory_limit=-1 date.timezone=Europe/Moscow
+            NULLMAILER_REMOTES: mail.example.com smtp 
         ports:
             - '80:80'
 ```
@@ -46,6 +47,7 @@ services:
 - `FILE_OWNER_UID` — UID для пользователя `www-data`, от которого работает веб-сервер.
 - `PHP_EXTENSIONS` — разделённый пробелами список расширений PHP, которые следует подключить.
 - `PHP_INI_SETTINGS` — разделённый пробелами список параметров php.ini, которые следует использовать.
+- `NULLMAILER_REMOTES` — содержимое файла [/etc/nullmailer/remotes](http://www.untroubled.org/nullmailer/HOWTO).
 
 ### Файлы настройки
 
@@ -122,6 +124,7 @@ services:
 - [GNU Wget](https://www.gnu.org/software/wget/)
 - [nmap](https://nmap.org/)
 - [npm](https://docs.npmjs.com/)
+- [nullmailer](http://www.untroubled.org/nullmailer/)
 - [OpenSSH](http://www.openssh.com/) (клиент)
 - [sshpass](https://sourceforge.net/projects/sshpass/)
 - [telnet](http://manpages.org/telnet)

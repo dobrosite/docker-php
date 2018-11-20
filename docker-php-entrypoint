@@ -17,6 +17,11 @@ fi
 echo "xdebug.remote_host=$(/sbin/ip route|awk '/default/ { print $3 }')" \
     >> /usr/local/etc/php/conf.d/php.external.ini
 
+## Задаём настройки nullmailer.
+if [ "${NULLMAILER_REMOTES=}" != "" ]; then
+	echo ${NULLMAILER_REMOTES} > /etc/nullmailer/remotes
+fi
+
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
 	set -- php "$@"

@@ -13,6 +13,10 @@ if [ "${PHP_INI_SETTINGS=}" != "" ]; then
 	done
 fi
 
+## Определяет адрес IP физической машины и сохраняет в настройках xdebug.
+echo "xdebug.remote_host=$(/sbin/ip route|awk '/default/ { print $3 }')" \
+    >> /usr/local/etc/php/conf.d/php.external.ini
+
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
 	set -- docker-apache-start "$@"

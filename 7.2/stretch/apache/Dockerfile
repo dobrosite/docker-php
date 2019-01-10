@@ -25,6 +25,7 @@ RUN apt-get update \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		git \
+		libargon2-0 \
 		make \
 		nmap \
 		sshpass \
@@ -199,6 +200,8 @@ RUN set -eux; \
 # Для расширения xsl.
 		libxslt1-dev \
 		zlib1g-dev \
+# Для расширения zip.
+		libzip-dev \
 		${PHP_EXTRA_BUILD_DEPS:-} \
 	; \
 	rm -rf /var/lib/apt/lists/*; \

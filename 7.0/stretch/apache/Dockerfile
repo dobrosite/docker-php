@@ -198,6 +198,8 @@ RUN set -eux; \
 # Для расширения xsl.
 		libxslt1-dev \
 		zlib1g-dev \
+# Для расширения zip.
+		libzip-dev \
 		${PHP_EXTRA_BUILD_DEPS:-} \
 	; \
 	rm -rf /var/lib/apt/lists/*; \

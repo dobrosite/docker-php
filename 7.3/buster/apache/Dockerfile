@@ -3,7 +3,7 @@
 ## Не меняйте его вручную — он будет перезаписан.
 ##
 
-FROM debian:jessie
+FROM debian:buster-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
@@ -25,6 +25,7 @@ RUN apt-get update \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		git \
+		libargon2-1 \
 		make \
 		nmap \
 		sshpass \
@@ -141,11 +142,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
-ENV GPG_KEYS 0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7 0B96609E270F565C13292B24C13C70B87267B52D
+ENV GPG_KEYS CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
 
-ENV PHP_VERSION 5.3.29
-ENV PHP_URL="https://secure.php.net/get/php-5.3.29.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-5.3.29.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="c4e1cf6972b2a9c7f2777a18497d83bf713cdbecabb65d3ff62ba441aebb0091" PHP_MD5=""
+ENV PHP_VERSION 7.3.1
+ENV PHP_URL="https://secure.php.net/get/php-7.3.1.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.3.1.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="afef2b0cd7f2641274a1a0aabe67e30f2334970d7c530382dfa9d79cfe74388e" PHP_MD5=""
 
 RUN set -xe; \
 	\
@@ -179,7 +180,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		lemon \
+		libargon2-dev \
 # Для расширения bzip2.
 		libbz2-dev \
 		libcurl4-openssl-dev \
@@ -187,12 +188,11 @@ RUN set -eux; \
 		libicu-dev \
 # Для поддержки JPEG расширением gd.
 		libjpeg-dev \
-		libmcrypt-dev \
-		libmysqld-dev \
 # Для поддержки PNG расширением gd.
 		libpng-dev \
 # Для поддержки PostgreSQL.
 		libpq-dev \
+		libsodium-dev \
 		libsqlite3-dev \
 		libssl-dev \
 # Для расширения tidy.
@@ -251,6 +251,8 @@ RUN set -eux; \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
 # статически.
 		--with-openssl=/usr \
+# https://wiki.php.net/rfc/argon2_password_hash (7.2+).
+		--with-password-argon2 \
 		--with-zlib \
 		\
 		--enable-ctype=shared \
@@ -275,16 +277,14 @@ RUN set -eux; \
 		--with-gettext=shared \
 		--with-iconv=shared \
 		--with-jpeg-dir=/usr/local \
-		--with-mcrypt=shared \
-		--with-mysql=shared \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \
 		--with-pdo_sqlite=shared \
-		--with-pdo_sqlite3=shared \
 		--with-pgsql=shared \
 		--with-readline=shared \
-		--with-sqlite=shared \
+# https://wiki.php.net/rfc/libsodium.
+		--with-sodium=shared \
 		--with-sqlite3=shared \
 		--with-tidy=shared \
 		--with-xsl=shared \
@@ -323,7 +323,7 @@ RUN set -eux; \
 	rm -rf /tmp/pear ~/.pearrc
 
 ## Устанавливаем xdebug.
-RUN pecl install --force xdebug-2.2.7
+RUN pecl install --force xdebug-2.7.0beta1
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

@@ -7,6 +7,10 @@ set -e
 
 # https://secure.php.net/gpg-keys.php
 declare -A gpgKeys=(
+	# https://secure.php.net/downloads.php#gpg-7.3
+	# https://secure.php.net/gpg-keys.php#gpg-7.3
+	['7.3']='CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D'
+
 	# https://secure.php.net/downloads.php#gpg-7.2
 	# https://secure.php.net/gpg-keys.php#gpg-7.2
 	['7.2']='1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F'
@@ -38,7 +42,7 @@ declare -A gpgKeys=(
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( "$@" )
-if [ ${#versions[@]} -eq 0 ]; then
+if [[ ${#versions[@]} -eq 0 ]]; then
 	versions=( */ )
 fi
 versions=( "${versions[@]%/}" )
@@ -59,11 +63,13 @@ for version in "${versions[@]}"; do
 
 	rcVersion="${version%-rc}"
 
-	# "7", "5", etc
+	# "7", "5" и т. д.
 	majorVersion="${rcVersion%%.*}"
-	# "2", "1", "6", etc
+	# "2", "1", "6" и т. д.
 	minorVersion="${rcVersion#$majorVersion.}"
 	minorVersion="${minorVersion%%.*}"
+	# Идентификатор версии вида 70300.
+	versionId="${majorVersion}$(printf '%02d' ${minorVersion})00"
 
 	# scrape the relevant API based on whether we're looking for pre-releases
 	apiUrl="https://secure.php.net/releases/index.php?json&max=200&version=${rcVersion%%.*}"
@@ -80,7 +86,7 @@ for version in "${versions[@]}"; do
 				.filename
 		) ]
 	'
-	if [ "$rcVersion" != "$version" ]; then
+	if [[ "$rcVersion" != "$version" ]]; then
 		apiUrl='https://qa.php.net/api.php?type=qa-releases&format=json'
 		apiJqExpr='
 			.releases[]
@@ -102,7 +108,7 @@ for version in "${versions[@]}"; do
 	) )
 	unset IFS
 
-	if [ "${#possibles[@]}" -eq 0 ]; then
+	if [[ "${#possibles[@]}" -eq 0 ]]; then
 		echo >&2
 		echo >&2 "error: unable to determine available releases of $version"
 		echo >&2
@@ -111,42 +117,42 @@ for version in "${versions[@]}"; do
 
 	# format of "possibles" array entries is "VERSION URL.TAR.XZ URL.TAR.XZ.ASC SHA256 MD5" (each value shell quoted)
 	#   see the "apiJqExpr" values above for more details
-	eval "possi=( ${possibles[0]} )"
-	fullVersion="${possi[0]}"
-	url="${possi[1]}"
-	ascUrl="${possi[2]}"
-	sha256="${possi[3]}"
-	md5="${possi[4]}"
-	filename="${possi[5]}"
+	eval "possible=( ${possibles[0]} )"
+	fullVersion="${possible[0]}"
+	url="${possible[1]}"
+	ascUrl="${possible[2]}"
+	sha256="${possible[3]}"
+	md5="${possible[4]}"
+	filename="${possible[5]}"
 
 	gpgKey="${gpgKeys[$rcVersion]}"
-	if [ -z "$gpgKey" ]; then
+	if [[ -z "$gpgKey" ]]; then
 		echo >&2 "ERROR: missing GPG key fingerprint for $version"
 		echo >&2 "  try looking on https://secure.php.net/downloads.php#gpg-$version"
 		exit 1
 	fi
 
 	# if we don't have a .asc URL, let's see if we can figure one out :)
-	if [ -z "$ascUrl" ] && wget -q --spider "$url.asc"; then
+	if [[ -z "$ascUrl" ]] && wget -q --spider "$url.asc"; then
 		ascUrl="$url.asc"
 	fi
 
 	dockerfiles=()
 
-	for suite in stretch jessie; do
-		[ -d "$version/$suite" ] || continue
+	for suite in buster stretch jessie; do
+		[[ -d "$version/$suite" ]] || continue
 
 		echo "### $version/$suite ###"
 
 		alpineVer="${suite#alpine}"
 
 		baseDockerfile=Dockerfile.debian.template
-		if [ "${suite#alpine}" != "$suite" ]; then
+		if [[ "${suite#alpine}" != "$suite" ]]; then
 			baseDockerfile=Dockerfile.alpine.template
 		fi
 
 		for variant in apache; do
-			[ -d "$version/$suite/$variant" ] || continue
+			[[ -d "$version/$suite/$variant" ]] || continue
 
             echo "### $version/$suite/$variant ###"
 
@@ -163,29 +169,34 @@ for version in "${versions[@]}"; do
 			' "${Dockerfile}"
 
             oldFiles=$(find "$version/$suite/$variant/" -name 'docker-*')
-            if [ ! -z "${oldFiles}" ]; then
+            if [[ ! -z "${oldFiles}" ]]; then
                 rm ${oldFiles}
             fi
 			cp docker-* "$version/$suite/$variant/"
 			cp php*.ini "$version/$suite/$variant/"
 
-			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$suite" = 'jessie' ]; then
+			if [[ ${versionId} -lt 70200 ]] || [[ "${suite}" = 'jessie' ]]; then
 				# argon2 password hashing is only supported in 7.2+ and stretch+
 				sed -ri '/argon2/d' "${Dockerfile}"
 			fi
 
-			if [ ${suite} = 'stretch' ]; then
+			if [[ ${suite} = 'stretch' ]]; then
 				# В Debian Stretch libicu-dev не требуется для сборки intl.
 				sed -ri '/libicu-dev/d' "${Dockerfile}"
 
 				# PHP 5.x
-				if [ "$majorVersion" = '5' ]; then
+				if [[ "$majorVersion" = '5' ]]; then
 					sed -ri 's!libssl-dev!libssl1.0-dev!g' "${Dockerfile}"
 				fi
 			fi
 
-			# PHP >= 5.4
-			if [ "$majorVersion" -gt '5' ] || [ "$majorVersion" = '5' -a "$minorVersion" -gt '3' ]; then
+			# Для Debian Buster меняем версию библиотеки argon2.
+			if [[ ${suite} = 'buster' ]]; then
+				sed -ri 's!libargon2-0-dev!libargon2-dev!g' "${Dockerfile}"
+				sed -ri 's!libargon2-0!libargon2-1!g' "${Dockerfile}"
+			fi
+
+			if (( ${versionId} >= 50400 )); then
 				# Начиная с PHP 5.4 libmysqld-dev и lemon уже не нужны.
 				sed -ri '/libmysqld-dev/d' "${Dockerfile}"
 				sed -ri '/lemon/d' "${Dockerfile}"
@@ -193,41 +204,42 @@ for version in "${versions[@]}"; do
 				sed -ri '/--with-sqlite\W/d' "${Dockerfile}"
 			fi
 
-			# PHP < 7.2
-			if [ "$majorVersion" = '5' ] || [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
+			if (( ${versionId} < 70200 )); then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium
 				sed -ri '/sodium/d' "${Dockerfile}"
 			fi
 
-			# PHP >= 7.0
-			if [ "$majorVersion" -gt '5' ]; then
+			if (( ${versionId} >= 70000 )); then
 				# Расширение mysql удалено в PHP 7.0.
 				sed -ri '/--with-mysql=/d' "${Dockerfile}"
 			fi
 
-			# PHP >= 7.2
-			if [ "$majorVersion" -gt '7' ] || [ "$majorVersion" = '7' -a "$minorVersion" -gt '1' ]; then
+			if (( ${versionId} >= 70200 )); then
 				# Начиная с PHP 7.2 расширения mcrypt нет.
 				sed -ri '/mcrypt/d' "${Dockerfile}"
 				sed -ri '/libmcrypt-dev/d' "${Dockerfile}"
 			fi
 
-			if [ "${majorVersion}" -lt 7 ]; then
-				if [ "${minorVersion}" -lt 4 ]; then
-					sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.2.7/g' "${Dockerfile}"
-        		elif [ "${minorVersion}" -lt 5 ]; then
-					sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.4.1/g' "${Dockerfile}"
-        		else
-					sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.5.5/g' "${Dockerfile}"
-        		fi
+			if (( ${versionId} < 50400 )); then
+				sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.2.7/g' "${Dockerfile}"
+			elif (( ${versionId} < 50500 )); then
+				sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.4.1/g' "${Dockerfile}"
+			elif (( ${versionId} < 70000 )); then
+				sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.5.5/g' "${Dockerfile}"
+			elif (( ${versionId} >= 70300 )); then
+				sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug-2.7.0beta1/g' "${Dockerfile}"
 			else
 				sed -ri 's/xdebug-%%XDEBUG_VERSION%%/xdebug/g' "${Dockerfile}"
 			fi
 
-			# automatic `-slim` for stretch
+			# Добавление «-slim» для всех версий Debian новее Jessie.
 			# TODO always add slim once jessie is removed
+			if [[ "${suite}" != 'jessie' ]]; then
+				suite="${suite}-slim"
+			fi
+
 			sed -ri \
-				-e 's!%%DEBIAN_SUITE%%!'"${suite/stretch/stretch-slim}"'!' \
+				-e 's!%%DEBIAN_SUITE%%!'"${suite}"'!' \
 				-e 's!%%ALPINE_VERSION%%!'"$alpineVer"'!' \
 				"${Dockerfile}"
 			dockerfiles+=( "${Dockerfile}" )
@@ -247,7 +259,7 @@ for version in "${versions[@]}"; do
 			"${dockerfiles[@]}"
 	)
 
-	# update entrypoint commands
+	# Update entrypoint commands.
 	for dockerfile in "${dockerfiles[@]}"; do
 		cmd="$(awk '$1 == "CMD" { $1 = ""; print }' "$dockerfile" | tail -1 | jq --raw-output '.[0]')"
 		entrypoint="$(dirname "$dockerfile")/docker-php-entrypoint"

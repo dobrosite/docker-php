@@ -23,6 +23,8 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install nullmailer \
 	&& rm -r /var/lib/apt/lists/*
 
+COPY ssh_config /var/www/.ssh/config
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		git \
 		make \
@@ -143,9 +145,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS 0BD78B5F97500D450838F95DFE857D9A90D90EC1 6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3
 
-ENV PHP_VERSION 5.6.39
-ENV PHP_URL="https://secure.php.net/get/php-5.6.39.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-5.6.39.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="b3db2345f50c010b01fe041b4e0f66c5aa28eb325135136f153e18da01583ad5" PHP_MD5=""
+ENV PHP_VERSION 5.6.40
+ENV PHP_URL="https://secure.php.net/get/php-5.6.40.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-5.6.40.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="ffd025d34623553ab2f7fd8fb21d0c9e6f9fa30dc565ca03a1d7b763023fba00" PHP_MD5=""
 
 RUN set -xe; \
 	\

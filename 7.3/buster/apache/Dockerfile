@@ -23,6 +23,8 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install nullmailer \
 	&& rm -r /var/lib/apt/lists/*
 
+COPY ssh_config /var/www/.ssh/config
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		git \
 		libargon2-1 \
@@ -144,9 +146,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
 
-ENV PHP_VERSION 7.3.1
-ENV PHP_URL="https://secure.php.net/get/php-7.3.1.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.3.1.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="afef2b0cd7f2641274a1a0aabe67e30f2334970d7c530382dfa9d79cfe74388e" PHP_MD5=""
+ENV PHP_VERSION 7.3.2
+ENV PHP_URL="https://secure.php.net/get/php-7.3.2.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.3.2.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="946f50dacbd2f61e643bb737021cbe8b1816e780ee7ad3e0cd999a1892ab0add" PHP_MD5=""
 
 RUN set -xe; \
 	\

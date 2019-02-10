@@ -58,6 +58,9 @@ generated_warning() {
 }
 
 for version in "${versions[@]}"; do
+	if [[ "${version}" == 'context' ]]; then
+		continue;
+	fi
 
     echo '========='
     echo " PHP ${version}"
@@ -174,7 +177,8 @@ for version in "${versions[@]}"; do
             echo
 
 			echo "→ Удаляю старые файлы..."
-			rm "${targetPath}"/*
+			rm -r "${targetPath}"/*
+			find "${targetPath}" -mindepth 1 -type d -exec rm -v {} \;
 
 			Dockerfile="${version}/${suite}/${variant}/Dockerfile"
 
@@ -189,9 +193,11 @@ for version in "${versions[@]}"; do
 				ia && ac == 1 { system("cat Dockerfile." variant ".block-" ab) }
 			' "${Dockerfile}"
 
-			echo '→ Копирую файлы...'
-			cp docker-* "${targetPath}/"
-			cp php*.ini "${targetPath}/"
+			echo '→ Копирую общие файлы...'
+			cp -r context/common/* "${targetPath}/"
+
+			echo '→ Копирую файлы Apache...'
+			cp -rf context/apache/* "${targetPath}/"
 
 			echo '→ Меняю Dockerfile с учётом ОС и версии PHP:'
 			if [[ ${versionId} -lt 70200 ]] || [[ "${suite}" = 'jessie' ]]; then
@@ -284,7 +290,7 @@ for version in "${versions[@]}"; do
 	echo '→ Обновляю входные точки...'
 	for dockerfile in "${dockerfiles[@]}"; do
 		cmd="$(awk '$1 == "CMD" { $1 = ""; print }' "$dockerfile" | tail -1 | jq --raw-output '.[0]')"
-		entrypoint="$(dirname "$dockerfile")/docker-php-entrypoint"
+		entrypoint="$(dirname "$dockerfile")/usr/local/bin/docker-php-entrypoint"
 		sed -i 's! php ! '"$cmd"' !g' "$entrypoint"
 	done
 

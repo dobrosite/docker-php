@@ -1,5 +1,6 @@
 FROM debian:%%DEBIAN_SUITE%%
 
+## Широкоиспользуемые системные и вспомогательные пакеты.
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
 		curl \
@@ -13,14 +14,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		xz-utils \
 	&& rm -r /var/lib/apt/lists/*
 
+## NullMailer
 RUN apt-get update \
 	&& echo nullmailer shared/mailname string me | debconf-set-selections \
 	&& DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install nullmailer \
 	&& rm -r /var/lib/apt/lists/*
 
-COPY ssh_config /var/www/.ssh/config
-
+## Инструменты и библиотеки для разработки.
 RUN apt-get update && apt-get install -y --no-install-recommends \
+		bison \
 		git \
 		libargon2-0 \
 		make \
@@ -106,8 +108,8 @@ RUN set -xe; \
 		rm -rf "$GNUPGHOME"; \
 	fi;
 
-COPY docker-php-* /usr/local/bin/
-COPY php*.ini /usr/local/etc/php/
+COPY usr/ /usr/
+COPY var/ /var/
 
 RUN set -eux; \
 	\

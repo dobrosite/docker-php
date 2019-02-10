@@ -23,6 +23,8 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install nullmailer \
 	&& rm -r /var/lib/apt/lists/*
 
+COPY ssh_config /var/www/.ssh/config
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		git \
 		make \

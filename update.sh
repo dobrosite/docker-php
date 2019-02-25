@@ -64,20 +64,24 @@ for version in ${versions}; do
     echo " PHP ${version}"
     echo '========='
 
-	rcVersion="${version%-rc}"
-
+	rcVersion=${version}
+	if [[ "${version}" == '7.3' ]]; then
+		rcVersion=7.3RC
+	fi
 	# "7" для "7.x", "5" для "5.x" и т. д.
-	majorVersion="${rcVersion%%.*}"
+	majorVersion="${version%%.*}"
 	# "2" для "x.2" и т. д.
-	minorVersion="${rcVersion#$majorVersion.}"
+	minorVersion="${version#$majorVersion.}"
 	minorVersion="${minorVersion%%.*}"
 	# Идентификатор версии вида 70300.
 	versionId="${majorVersion}$(printf '%02d' ${minorVersion})00"
 
+	echo "Ищу последнюю версию PHP ${version}..."
+
 	# scrape the relevant API based on whether we're looking for pre-releases
-	apiUrl="https://secure.php.net/releases/index.php?json&max=200&version=${rcVersion%%.*}"
+	apiUrl="https://secure.php.net/releases/index.php?json&max=200&version=${version%%.*}"
 	apiJqExpr='
-		(keys[] | select(startswith("'"$rcVersion"'."))) as $version
+		(keys[] | select(startswith("'"$version"'."))) as $version
 		| [ $version, (
 			.[$version].source[]
 			| select(.filename // "" | endswith(".xz") // endswith(".bz2"))
@@ -93,18 +97,17 @@ for version in ${versions}; do
 		apiUrl='https://qa.php.net/api.php?type=qa-releases&format=json'
 		apiJqExpr='
 			.releases[]
-			| select(.version | startswith("'"$rcVersion"'."))
+			| select(.version | startswith("'"$version"'."))
 			| [
 				.version,
 				.files.xz.path // "",
 				"",
 				.files.xz.sha256 // "",
-				.files.xz.md5 // ""
+				.files.xz.md5 // "",
+				.files.xz.path // ""
 			]
 		'
 	fi
-
-	echo "Ищу последнюю версию PHP ${version}..."
 
 	IFS=$'\n'
 	possibles=( $(
@@ -116,7 +119,7 @@ for version in ${versions}; do
 
 	if [[ "${#possibles[@]}" -eq 0 ]]; then
 		echo >&2
-		echo >&2 "error: unable to determine available releases of $version"
+		echo >&2 "ОШИБКА: не удалось найти доступные для загрузки выпуски PHP $version."
 		echo >&2
 		exit 1
 	fi
@@ -134,11 +137,11 @@ for version in ${versions}; do
 	echo "SHA256: ${sha256}"
 	md5="${possible[4]}"
 	echo "MD5: ${md5}"
-	filename="${possible[5]}"
+	filename=$(basename "${possible[5]}")
 	echo "Имя файла: ${filename}"
 
 
-	gpgKey="${gpgKeys[$rcVersion]}"
+	gpgKey="${gpgKeys[$version]}"
 	if [[ -z "$gpgKey" ]]; then
 		echo >&2 "ERROR: missing GPG key fingerprint for $version"
 		echo >&2 "  try looking on https://secure.php.net/downloads.php#gpg-$version"

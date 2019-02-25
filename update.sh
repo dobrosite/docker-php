@@ -41,11 +41,12 @@ declare -A gpgKeys=(
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-versions=( "$@" )
-if [[ ${#versions[@]} -eq 0 ]]; then
-	versions=( */ )
+if ! which jq >/dev/null 2>/dev/null; then
+    echo 'ОШИБКА: Не найдена утилита jq. См. http://stedolan.github.io/jq/'
+    exit 129
 fi
-versions=( "${versions[@]%/}" )
+
+versions=$(find . -maxdepth 1 -name '?.?' -printf '%f ')
 
 generated_warning() {
 	cat <<-EOH
@@ -57,10 +58,7 @@ generated_warning() {
 	EOH
 }
 
-for version in "${versions[@]}"; do
-	if [[ "${version}" == 'context' ]]; then
-		continue;
-	fi
+for version in ${versions}; do
 
     echo '========='
     echo " PHP ${version}"

@@ -29,7 +29,6 @@ RUN apt-get update \
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		bison \
 		git \
-		libicu57 \
 		make \
 		nmap \
 		sshpass \
@@ -280,7 +279,7 @@ RUN set -eux; \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \
-		--with-pdo_sqlite=shared \
+		--with-pdo_sqlite=shared,/usr \
 		--with-pgsql=shared \
 		--with-readline=shared \
 		--with-sqlite3=shared \

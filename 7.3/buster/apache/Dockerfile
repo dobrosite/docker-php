@@ -30,7 +30,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		bison \
 		git \
 		libargon2-1 \
-		libicu63 \
 		make \
 		nmap \
 		sshpass \
@@ -263,7 +262,7 @@ RUN set -eux; \
 		--enable-exif=shared \
 		--enable-fileinfo=shared \
 		--enable-filter=shared \
-#		--enable-intl=shared \
+		--enable-intl=shared \
 		--enable-pcntl=shared \
 		--enable-posix=shared \
 		--enable-session=shared \
@@ -283,7 +282,7 @@ RUN set -eux; \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \
-		--with-pdo_sqlite=shared \
+		--with-pdo_sqlite=shared,/usr \
 		--with-pgsql=shared \
 		--with-readline=shared \
 # https://wiki.php.net/rfc/libsodium.

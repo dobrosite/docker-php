@@ -30,7 +30,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		bison \
 		git \
 		libargon2-0 \
-		libicu57 \
 		make \
 		nmap \
 		sshpass \
@@ -282,7 +281,7 @@ RUN set -eux; \
 		--with-mysqli=shared \
 		--with-pdo_mysql=shared \
 		--with-pdo_pgsql=shared \
-		--with-pdo_sqlite=shared \
+		--with-pdo_sqlite=shared,/usr \
 		--with-pgsql=shared \
 		--with-readline=shared \
 # https://wiki.php.net/rfc/libsodium.

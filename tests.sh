@@ -27,8 +27,7 @@ function build_image
     fi
 }
 
-#versions=$(find "${project_dir}" -maxdepth 1 -name '?.?' -printf '%f ')
-versions='7.3'
+versions=$(find "${project_dir}" -maxdepth 1 -name '?.?' -printf '%f ')
 for version in ${versions}; do
     folders=$(find "${project_dir}/${version}" -name Dockerfile -printf '%h ')
     for folder in ${folders}; do

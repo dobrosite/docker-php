@@ -1,0 +1,5 @@
+DISTRIB_RELEASE='5.5.38'
+DISTRIB_URL='https://secure.php.net/get/php-5.5.38.tar.bz2/from/this/mirror'
+DISTRIB_SHA256='473c81ebb2e48ca468caee031762266651843d7227c18a824add9b07b9393e38'
+DISTRIB_MD5=''
+DISTRIB_FILENAME='php-5.5.38.tar.bz2'

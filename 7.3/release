@@ -1,0 +1,6 @@
+DISTRIB_RELEASE=7.3.3
+DISTRIB_URL_ASC=https://secure.php.net/get/php-7.3.3.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-7.3.3.tar.bz2/from/this/mirror
+DISTRIB_SHA256=61969e943adfea79701a34b8e701edd3f95be829d16601a4aabeb05f83023ce6
+DISTRIB_MD5=
+DISTRIB_FILENAME=php-7.3.3.tar.bz2

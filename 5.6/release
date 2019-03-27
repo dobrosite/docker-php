@@ -1,0 +1,5 @@
+DISTRIB_RELEASE='5.6.40'
+DISTRIB_URL='https://secure.php.net/get/php-5.6.40.tar.bz2/from/this/mirror'
+DISTRIB_SHA256='ffd025d34623553ab2f7fd8fb21d0c9e6f9fa30dc565ca03a1d7b763023fba00'
+DISTRIB_MD5=''
+DISTRIB_FILENAME='php-5.6.40.tar.bz2'

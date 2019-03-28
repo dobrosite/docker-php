@@ -1,5 +1,6 @@
-DISTRIB_RELEASE='7.0.33'
-DISTRIB_URL='https://secure.php.net/get/php-7.0.33.tar.bz2/from/this/mirror'
-DISTRIB_SHA256='4933ea74298a1ba046b0246fe3771415c84dfb878396201b56cb5333abe86f07'
-DISTRIB_MD5=''
-DISTRIB_FILENAME='php-7.0.33.tar.bz2'
+DISTRIB_RELEASE=7.0.33
+DISTRIB_URL_ASC=https://secure.php.net/get/php-7.0.33.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-7.0.33.tar.bz2/from/this/mirror
+DISTRIB_SHA256=4933ea74298a1ba046b0246fe3771415c84dfb878396201b56cb5333abe86f07
+DISTRIB_MD5=
+DISTRIB_FILENAME=php-7.0.33.tar.bz2

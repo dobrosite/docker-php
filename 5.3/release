@@ -1,5 +1,6 @@
-DISTRIB_RELEASE='5.3.29'
-DISTRIB_URL='https://secure.php.net/get/php-5.3.29.tar.bz2/from/this/mirror'
-DISTRIB_SHA256='c4e1cf6972b2a9c7f2777a18497d83bf713cdbecabb65d3ff62ba441aebb0091'
-DISTRIB_MD5=''
-DISTRIB_FILENAME='php-5.3.29.tar.bz2'
+DISTRIB_RELEASE=5.3.29
+DISTRIB_URL_ASC=https://secure.php.net/get/php-5.3.29.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-5.3.29.tar.bz2/from/this/mirror
+DISTRIB_SHA256=c4e1cf6972b2a9c7f2777a18497d83bf713cdbecabb65d3ff62ba441aebb0091
+DISTRIB_MD5=
+DISTRIB_FILENAME=php-5.3.29.tar.bz2

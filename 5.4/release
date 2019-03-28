@@ -1,5 +1,6 @@
-DISTRIB_RELEASE='5.4.45'
-DISTRIB_URL='https://secure.php.net/get/php-5.4.45.tar.bz2/from/this/mirror'
-DISTRIB_SHA256='4e0d28b1554c95cfaea6fa2b64aac85433f158ce72bb571bcd5574f98f4c6582'
-DISTRIB_MD5=''
-DISTRIB_FILENAME='php-5.4.45.tar.bz2'
+DISTRIB_RELEASE=5.4.45
+DISTRIB_URL_ASC=https://secure.php.net/get/php-5.4.45.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-5.4.45.tar.bz2/from/this/mirror
+DISTRIB_SHA256=4e0d28b1554c95cfaea6fa2b64aac85433f158ce72bb571bcd5574f98f4c6582
+DISTRIB_MD5=
+DISTRIB_FILENAME=php-5.4.45.tar.bz2

@@ -257,7 +257,7 @@ RUN set -eux; \
 	rm -rf /tmp/pear ~/.pearrc
 
 ## Устанавливаем xdebug.
-RUN pecl install --force xdebug-%%XDEBUG_VERSION%%
+RUN pecl install --force xdebug%%XDEBUG_VERSION%%
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

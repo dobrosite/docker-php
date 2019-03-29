@@ -185,7 +185,6 @@ RUN set -eux; \
 # Для поддержки PostgreSQL.
 		libpq-dev \
 		libsqlite3-dev \
-		libssl-dev \
 # Для расширения tidy.
 		libtidy-dev \
 		libxml2-dev \
@@ -194,7 +193,7 @@ RUN set -eux; \
 		zlib1g-dev \
 # Для расширения zip.
 		libzip-dev \
-		 libmcrypt-dev \
+		 libmcrypt-dev libssl-dev apache2-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -275,14 +274,12 @@ RUN set -eux; \
 		--with-sqlite3=shared \
 		--with-tidy=shared \
 		--with-xsl=shared \
-		 --with-mcrypt=shared --with-mysql=shared \
+		 --with-mcrypt=shared --with-mysql=shared --with-apxs2 \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
-		\
-		${PHP_EXTRA_CONFIGURE_ARGS:-} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \

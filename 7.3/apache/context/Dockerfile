@@ -24,10 +24,10 @@ RUN apt-get update \
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		bison \
 		git \
-		libargon2-0 \
 		make \
 		nmap \
 		sshpass \
+		 libargon2-1 \
 	&& rm -r /var/lib/apt/lists/*
 
 # Запрещаем установку пакетов PHP из дистрибутива Debian.
@@ -62,8 +62,65 @@ RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d
 
-##[EXTRAS-START]##
-##[EXTRAS-END]##
+##%%VARIANT%%
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		apache2 \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN usermod --shell $(which bash) www-data
+
+ENV APACHE_CONFDIR /etc/apache2
+ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
+
+RUN set -ex \
+	\
+# generically convert lines like
+#   export APACHE_RUN_USER=www-data
+# into
+#   : ${APACHE_RUN_USER:=www-data}
+#   export APACHE_RUN_USER
+# so that they can be overridden at runtime ("-e APACHE_RUN_USER=...")
+	&& sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS" \
+	\
+# setup directories and permissions
+	&& . "$APACHE_ENVVARS" \
+	&& for dir in \
+		"$APACHE_LOCK_DIR" \
+		"$APACHE_RUN_DIR" \
+		"$APACHE_LOG_DIR" \
+		/var/www/html \
+	; do \
+		rm -rvf "$dir" \
+		&& mkdir -p "$dir" \
+		&& chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$dir"; \
+	done
+
+# Apache + PHP requires preforking Apache for best results
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
+# logs should go to stdout / stderr
+RUN set -ex \
+	&& . "$APACHE_ENVVARS" \
+	&& ln -sfT /dev/stderr "$APACHE_LOG_DIR/error.log" \
+	&& ln -sfT /dev/stdout "$APACHE_LOG_DIR/access.log" \
+	&& ln -sfT /dev/stdout "$APACHE_LOG_DIR/other_vhosts_access.log"
+
+# PHP files should be handled by PHP, and should be preferred over any other file type
+RUN { \
+		echo '<FilesMatch \.php$>'; \
+		echo '\tSetHandler application/x-httpd-php'; \
+		echo '</FilesMatch>'; \
+		echo; \
+		echo 'DirectoryIndex disabled'; \
+		echo 'DirectoryIndex index.php index.html'; \
+		echo; \
+		echo '<Directory /var/www/>'; \
+		echo '\tOptions -Indexes'; \
+		echo '\tAllowOverride All'; \
+		echo '</Directory>'; \
+	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
+	&& a2enconf docker-php
 
 # Apply stack smash protection to functions using local buffers and alloca().
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no
@@ -116,7 +173,6 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		libargon2-0-dev \
 # Для расширения bzip2.
 		libbz2-dev \
 		libcurl4-openssl-dev \
@@ -129,7 +185,6 @@ RUN set -eux; \
 # Для поддержки PostgreSQL.
 		libpq-dev \
 		libsqlite3-dev \
-		libssl-dev \
 # Для расширения tidy.
 		libtidy-dev \
 		libxml2-dev \
@@ -138,7 +193,7 @@ RUN set -eux; \
 		zlib1g-dev \
 # Для расширения zip.
 		libzip-dev \
-		 \
+		 libargon2-dev libssl-dev libsodium-dev apache2-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -186,8 +241,6 @@ RUN set -eux; \
 # Для правильной работы некоторых функций (например ftp_ssl_connect) OpenSSL должен быть собран
 # статически.
 		--with-openssl=/usr \
-# https://wiki.php.net/rfc/argon2_password_hash (7.2+).
-		--with-password-argon2 \
 		--with-zlib \
 		\
 		--enable-ctype=shared \
@@ -221,14 +274,12 @@ RUN set -eux; \
 		--with-sqlite3=shared \
 		--with-tidy=shared \
 		--with-xsl=shared \
-		 \
+		 --with-password-argon2 --with-sodium=shared --with-apxs2 \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
-		\
-		${PHP_EXTRA_CONFIGURE_ARGS:-} \
 	; \
 	make -j "$(nproc)"; \
 	make install; \
@@ -257,7 +308,7 @@ RUN set -eux; \
 	rm -rf /tmp/pear ~/.pearrc
 
 ## Устанавливаем xdebug.
-RUN pecl install --force xdebug
+RUN pecl install --force xdebug-2.7.0beta1
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

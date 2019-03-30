@@ -32,7 +32,20 @@ ifeq ($(VARIANT),apache)
 include $(ROOT_DIR)/apache.mk
 endif
 
+# bzip2 DOM pdo_sqlite3 SPL date filter libxml readline reflection xml xmlreader xsl
+TEST_PHP_EXTENSIONS := ctype curl exif fileinfo gd gettext iconv intl mcrypt mysql mysqli pcntl pdo_mysql pdo_pgsql pgsql posix session simplexml soap sockets sqlite tidy tokenizer xmlwriter zip
 
+ifeq ($(findstring 7.,$(PHP_VERSION)),)
+#	TEST_PHP_EXTENSIONS += eregi
+endif
+
+ifneq ($(findstring 7.2,$(PHP_VERSION)),)
+    TEST_PHP_EXTENSIONS += sodium
+endif
+
+ifneq ($(findstring 7.3,$(PHP_VERSION)),)
+    TEST_PHP_EXTENSIONS += sodium
+endif
 
 ####
 ## Ищет файл в текущей и родительской папках.
@@ -51,9 +64,16 @@ clean: ## Удаляет автоматически создаваемые фа�
 build: $(CONTEXT_DIR)/Dockerfile ## Собирает образ.
 	docker build -t $(DOCKER_IMAGE) $(CONTEXT_DIR)
 
+.PHONY: shell
+shell: ## Запускает командную оболочку.
+	docker run -it $(DOCKER_IMAGE) /bin/bash
+
 .PHONY: tests
 tests: ## Проверяет собранный образ.
-	docker run --volume="$(ROOT_DIR)/tests:/usr/local/tests:ro" $(DOCKER_IMAGE) /usr/local/tests/tests.sh
+	docker run \
+		--volume="$(ROOT_DIR)/tests:/usr/local/tests:ro" \
+		-e "PHP_EXTENSIONS=$(TEST_PHP_EXTENSIONS)" \
+		$(DOCKER_IMAGE) /usr/local/tests/tests.sh
 
 .PHONY: update
 update: clean $(CONTEXT_DIR) $(CONTEXT_DIR)/Dockerfile ## Обновляет файлы для сборки образа Docker.
@@ -81,9 +101,10 @@ $(CONTEXT_DIR)/Dockerfile: $(VERSION_DIR)/release
 ifeq ($(VARIANT),apache)
 	sed -i -e '/##%%VARIANT%%/r $(call locate,Dockerfile.apache)' "$@"
 endif
-	$(call replace-in-file,EXTRA_DEV_DEPS,"$(EXTRA_DEV_DEPS)",$@)
+	$(call replace-in-file,PHP_EXTRA_DEPS,"$(PHP_EXTRA_DEPS)",$@)
 	$(call replace-in-file,PHP_EXTRA_BUILD_DEPS,"$(PHP_EXTRA_BUILD_DEPS)",$@)
 	$(call replace-in-file,PHP_EXTRA_CONFIGURE_ARGS,"$(PHP_EXTRA_CONFIGURE_ARGS)",$@)
+	$(call replace-in-file,MEMCACHED_VERSION,$(if $(MEMCACHED_VERSION),-$(MEMCACHED_VERSION),),$@)
 	$(call replace-in-file,XDEBUG_VERSION,$(if $(XDEBUG_VERSION),-$(XDEBUG_VERSION),),$@)
 
 $(VERSION_DIR)/release: FORCE

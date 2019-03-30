@@ -3,6 +3,9 @@ set -e
 
 ## Включаем затребованные расширения PHP.
 if [ "${PHP_EXTENSIONS=}" != "" ]; then
+	if expr "${PHP_EXTENSIONS}" : '.*memcached.*' > /dev/null; then
+		PHP_EXTENSIONS="session ${PHP_EXTENSIONS}"
+	fi
 	docker-php-ext-enable ${PHP_EXTENSIONS}
 fi
 
@@ -24,7 +27,7 @@ fi
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
-	set -- docker-apache-start "$@"
+	set -- ${MAIN_COMMAND} "$@"
 fi
 
 exec "$@"

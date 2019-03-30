@@ -56,3 +56,6 @@ RUN { \
 		echo '</Directory>'; \
 	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
 	&& a2enconf docker-php
+
+# Команда, выполняемая при запуске контейнера.
+ENV ENTRYPOINT_COMMAND docker-apache-start

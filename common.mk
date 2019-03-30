@@ -10,9 +10,10 @@ ROOT_DIR ?= $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 SHELL = /bin/sh
 
 
-EXTRA_DEV_DEPS :=
+MEMCACHED_VERSION :=
 PHP_EXTRA_BUILD_DEPS :=
 PHP_EXTRA_CONFIGURE_ARGS :=
+PHP_EXTRA_DEPS :=
 XDEBUG_VERSION :=
 
 

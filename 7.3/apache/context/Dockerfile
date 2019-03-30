@@ -27,7 +27,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		make \
 		nmap \
 		sshpass \
-		 libargon2-1 \
+	&& rm -r /var/lib/apt/lists/*
+
+# NodeJS.
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
+	&& apt-get update && apt-get install -y --no-install-recommends \
+		nodejs \
 	&& rm -r /var/lib/apt/lists/*
 
 # Запрещаем установку пакетов PHP из дистрибутива Debian.
@@ -47,20 +52,26 @@ ENV PHPIZE_DEPS \
 		g++ \
 		gcc \
 		libc-dev \
-		make \
 		pkg-config \
 		re2c
 
 RUN apt-get update && apt-get install -y --no-install-recommends $PHPIZE_DEPS \
 	&& rm -r /var/lib/apt/lists/*
 
-RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-	&& apt-get update && apt-get install -y --no-install-recommends \
-		nodejs \
-	&& rm -r /var/lib/apt/lists/*
-
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN mkdir -p $PHP_INI_DIR/conf.d
+
+## Дополнительные библиотеки для PHP.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		libmemcached11 \
+		libmemcached-dev \
+# Для сборки расширения memcached.
+		zlib1g-dev \
+		 libargon2-1 \
+	&& rm -r /var/lib/apt/lists/*
+
+# Команда, выполняемая при запуске контейнера.
+ENV ENTRYPOINT_COMMAND php
 
 ##%%VARIANT%%
 RUN apt-get update \
@@ -121,6 +132,9 @@ RUN { \
 		echo '</Directory>'; \
 	} | tee "$APACHE_CONFDIR/conf-available/docker-php.conf" \
 	&& a2enconf docker-php
+
+# Команда, выполняемая при запуске контейнера.
+ENV ENTRYPOINT_COMMAND docker-apache-start
 
 # Apply stack smash protection to functions using local buffers and alloca().
 # Make PHP's main executable position-independent (improves ASLR security mechanism, and has no
@@ -190,7 +204,6 @@ RUN set -eux; \
 		libxml2-dev \
 # Для расширения xsl.
 		libxslt1-dev \
-		zlib1g-dev \
 # Для расширения zip.
 		libzip-dev \
 		 libargon2-dev libssl-dev libsodium-dev apache2-dev \
@@ -307,8 +320,9 @@ RUN set -eux; \
 	pecl update-channels; \
 	rm -rf /tmp/pear ~/.pearrc
 
-## Устанавливаем xdebug.
-RUN pecl install --force xdebug-2.7.0beta1
+RUN pecl install --force \
+	memcached \
+	xdebug-2.7.0beta1
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

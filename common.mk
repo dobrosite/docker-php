@@ -9,23 +9,11 @@ ROOT_DIR ?= $(realpath $(dir $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 SHELL = /bin/sh
 
-#####
-### Обновляет сведения о последнем выпуске указанной версии PHP.
-###
-### @param $(1) Версия PHP.
-###
-#update-release = $(ROOT_DIR)/php-release.sh $(1) >$(ROOT_DIR)/$(1)/release
 
-.PHONY: help
-help: ## Выводит подсказку по доступным целям Make.
-	@awk 'BEGIN {FS = ":.*?## "; targets[0] = ""} /^[a-zA-Z_\.-]+:.*?## / \
-		{\
-			if (!($$1 in targets)) {\
-				printf "\033[36m%-20s\033[0m %s\n", $$1, $$2;\
-				targets[$$1] = 1;\
-			}\
-		}' $(MAKEFILE_LIST)
-
+EXTRA_DEV_DEPS :=
+PHP_EXTRA_BUILD_DEPS :=
+PHP_EXTRA_CONFIGURE_ARGS :=
+XDEBUG_VERSION :=
 
 
 ####
@@ -38,6 +26,15 @@ help: ## Выводит подсказку по доступным целям Ma
 replace-in-file = sed -ri -e 's!(%%$(1)%%)!'$(2)'!' "$(3)"
 
 
+.PHONY: help
+help: ## Выводит подсказку по доступным целям Make.
+	@awk 'BEGIN {FS = ":.*?## "; targets[0] = ""} /^[a-zA-Z_\.-]+:.*?## / \
+		{\
+			if (!($$1 in targets)) {\
+				printf "\033[36m%-20s\033[0m %s\n", $$1, $$2;\
+				targets[$$1] = 1;\
+			}\
+		}' $(MAKEFILE_LIST)
 
 FORCE:
 

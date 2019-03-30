@@ -22,6 +22,16 @@ DOCKER_IMAGE := php-$(PHP_VERSION)-$(VARIANT)
 ### Ключи GPG.
 DISTRIB_KEYS := $(file < $(VERSION_DIR)/keys)
 
+ifneq ($(realpath $(VERSION_DIR)/custom.mk),)
+include $(VERSION_DIR)/custom.mk
+endif
+ifneq ($(realpath $(VARIANT_DIR)/custom.mk),)
+include $(VARIANT_DIR)/custom.mk
+endif
+ifeq ($(VARIANT),apache)
+include $(ROOT_DIR)/apache.mk
+endif
+
 
 
 ####
@@ -29,31 +39,33 @@ DISTRIB_KEYS := $(file < $(VERSION_DIR)/keys)
 ##
 ## @param $(1) Имя файла.
 ##
-locate = $(or $(realpath $(1)),$(realpath ../$(1)))
+locate = $(or $(realpath $(1)),$(realpath ../$(1)),$(realpath ../../$(1)))
 
 
 
 .PHONY: clean
 clean: ## Удаляет автоматически создаваемые файлы сборки.
-	@echo "Удаляю старые файлы..."
 	-rm -r $(CONTEXT_DIR)
 
+.PHONY: build
+build: $(CONTEXT_DIR)/Dockerfile ## Собирает образ.
+	docker build -t $(DOCKER_IMAGE) $(CONTEXT_DIR)
+
+.PHONY: tests
+tests: ## Проверяет собранный образ.
+	docker run --volume="$(ROOT_DIR)/tests:/usr/local/tests:ro" $(DOCKER_IMAGE) /usr/local/tests/tests.sh
+
 .PHONY: update
-update: $(CONTEXT_DIR) $(CONTEXT_DIR)/Dockerfile ## ## Обновляет файлы для сборки образа Docker.
-
-#.PHONY: build
-#build: $(CONTEXT_DIR)/Dockerfile ## Собирает образ.
-#	docker build -t $(DOCKER_IMAGE) $(CONTEXT_DIR)
-
-#.PHONY: shell
-#shell: ## Запускает оболочку в контейнере.
-#	docker run -it --rm $(DOCKER_IMAGE) bash
-
+update: clean $(CONTEXT_DIR) $(CONTEXT_DIR)/Dockerfile ## Обновляет файлы для сборки образа Docker.
 
 $(CONTEXT_DIR):
 	mkdir $@
+	cp -r $(ROOT_DIR)/context/common/* $(CONTEXT_DIR)/
+ifneq ($(realpath $(ROOT_DIR)/context/$(VARIANT)),)
+	cp -rf $(ROOT_DIR)/context/$(VARIANT)/* $(CONTEXT_DIR)/
+endif
 
-$(CONTEXT_DIR)/Dockerfile: $(VERSION_DIR)/release FORCE
+$(CONTEXT_DIR)/Dockerfile: $(VERSION_DIR)/release
 	$(eval $(file < $(VERSION_DIR)/release))
 	cat $(ROOT_DIR)/Dockerfile.base >$@
 	sed -ri \
@@ -67,13 +79,14 @@ $(CONTEXT_DIR)/Dockerfile: $(VERSION_DIR)/release FORCE
 		-e 's!%%PHP_MD5%%!'"$(DISTRIB_MD5)"'!' \
 		"$@"
 ifeq ($(VARIANT),apache)
-	sed -i -e '/##\[EXTRAS-START\]##/r $(call locate,Dockerfile.apache)' "$@"
+	sed -i -e '/##%%VARIANT%%/r $(call locate,Dockerfile.apache)' "$@"
 endif
+	$(call replace-in-file,EXTRA_DEV_DEPS,"$(EXTRA_DEV_DEPS)",$@)
 	$(call replace-in-file,PHP_EXTRA_BUILD_DEPS,"$(PHP_EXTRA_BUILD_DEPS)",$@)
 	$(call replace-in-file,PHP_EXTRA_CONFIGURE_ARGS,"$(PHP_EXTRA_CONFIGURE_ARGS)",$@)
 	$(call replace-in-file,XDEBUG_VERSION,$(if $(XDEBUG_VERSION),-$(XDEBUG_VERSION),),$@)
 
-$(VERSION_DIR)/release:
+$(VERSION_DIR)/release: FORCE
 	cd $(VERSION_DIR) && $(MAKE) release
 
 # ifndef __VARIANT_MK

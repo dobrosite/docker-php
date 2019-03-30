@@ -8,13 +8,15 @@ __VERSION_MK := 1
 include $(ROOT_DIR)/common.mk
 
 
-
 ## Версия PHP.
 PHP_VERSION := $(notdir $(VERSION_DIR))
 
 ## Файлы сборки вариантов.
 VARIANT_MAKEFILES=$(wildcard */Makefile)
 
+#ifneq ($(realpath $(VERSION_DIR)/custom.mk),)
+include $(VERSION_DIR)/custom.mk
+#endif
 
 
 release: FORCE
@@ -22,7 +24,7 @@ release: FORCE
 
 .PHONY: update
 update: release $(VARIANT_MAKEFILES) ## Обновляет файлы для сборки образов Docker.
-	cd $^ && $(MAKE) update
+	$(foreach makefile,$(VARIANT_MAKEFILES),$(MAKE) -f $(makefile) update)
 
 %/Makefile: $(ROOT_DIR)/src/mk/Makefile.variant
 	cp $^ $@

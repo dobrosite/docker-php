@@ -32,8 +32,8 @@ ifeq ($(VARIANT),apache)
 include $(ROOT_DIR)/apache.mk
 endif
 
-# bzip2 DOM pdo_sqlite3 SPL date filter libxml readline reflection xml xmlreader xsl
-TEST_PHP_EXTENSIONS := ctype curl exif fileinfo gd gettext iconv intl mcrypt mysql mysqli pcntl pdo_mysql pdo_pgsql pgsql posix session simplexml soap sockets sqlite tidy tokenizer xmlwriter zip
+# DOM SPL date filter libxml readline reflection xml xmlreader xsl
+TEST_PHP_EXTENSIONS := bz2 ctype curl exif fileinfo gd gettext iconv intl mcrypt mysql mysqli pcntl pdo_mysql pdo_pgsql pgsql posix simplexml soap sockets sqlite3 tidy tokenizer xmlwriter zip
 
 ifeq ($(findstring 7.,$(PHP_VERSION)),)
 #	TEST_PHP_EXTENSIONS += eregi

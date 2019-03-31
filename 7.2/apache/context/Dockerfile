@@ -264,7 +264,7 @@ RUN set -eux; \
 		--enable-intl=shared \
 		--enable-pcntl=shared \
 		--enable-posix=shared \
-		--enable-session=shared \
+		--enable-session \
 		--enable-simplexml=shared \
 		--enable-soap=shared \
 		--enable-sockets=shared \

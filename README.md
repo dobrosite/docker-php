@@ -74,6 +74,7 @@ services:
   - [pcre](http://php.net/pcre)
   - [pdo](http://php.net/pdo)
   - [phar](http://php.net/phar)
+  - [session](http://php.net/manual/book.session.php)
   - [zlib](http://php.net/zlib)
 - Стандартные расширения (подключаются динамически):
   - [bzip2](http://php.net/bzip2)
@@ -101,7 +102,6 @@ services:
   - [posix](http://php.net/posix)
   - [readline](http://php.net/readline)
   - [reflection](http://php.net/reflection)
-  - [session](http://php.net/manual/book.session.php)
   - [simplexml](http://php.net/simplexml)
   - [soap](http://php.net/soap)
   - [sockets](http://php.net/sockets)

@@ -33,7 +33,15 @@ include $(ROOT_DIR)/apache.mk
 endif
 
 # DOM SPL date filter libxml readline reflection xml xmlreader xsl
-TEST_PHP_EXTENSIONS := bz2 ctype curl exif fileinfo gd gettext iconv intl mcrypt mysql mysqli pcntl pdo_mysql pdo_pgsql pgsql posix simplexml soap sockets sqlite3 tidy tokenizer xmlwriter zip
+TEST_PHP_EXTENSIONS := bz2 ctype curl exif fileinfo gd gettext iconv intl mysqli pcntl pdo_mysql pdo_pgsql pgsql posix simplexml soap sockets sqlite3 tidy tokenizer xmlwriter zip
+
+ifneq ($(findstring 5.,$(PHP_VERSION)),)
+	TEST_PHP_EXTENSIONS += mcrypt mysql
+endif
+
+ifneq ($(findstring 7.0,$(PHP_VERSION)),)
+    TEST_PHP_EXTENSIONS += mcrypt
+endif
 
 ifeq ($(findstring 7.,$(PHP_VERSION)),)
 #	TEST_PHP_EXTENSIONS += eregi

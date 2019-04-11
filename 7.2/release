@@ -1,6 +1,6 @@
-DISTRIB_RELEASE=7.2.16
-DISTRIB_URL_ASC=https://secure.php.net/get/php-7.2.16.tar.bz2.asc/from/this/mirror
-DISTRIB_URL=https://secure.php.net/get/php-7.2.16.tar.bz2/from/this/mirror
-DISTRIB_SHA256=2c0ad10053d58694cd14323248ecd6d9ba71d2733d160973c356ad01d09e7f38
+DISTRIB_RELEASE=7.2.17
+DISTRIB_URL_ASC=https://secure.php.net/get/php-7.2.17.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-7.2.17.tar.bz2/from/this/mirror
+DISTRIB_SHA256=91a811ab6f6d7acb312159cf6b0a3cffe968676fdebf042e9253245cc6094f75
 DISTRIB_MD5=
-DISTRIB_FILENAME=php-7.2.16.tar.bz2
+DISTRIB_FILENAME=php-7.2.17.tar.bz2

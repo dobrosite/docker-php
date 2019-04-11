@@ -151,9 +151,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
 
-ENV PHP_VERSION 7.2.16
-ENV PHP_URL="https://secure.php.net/get/php-7.2.16.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.16.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="2c0ad10053d58694cd14323248ecd6d9ba71d2733d160973c356ad01d09e7f38" PHP_MD5=""
+ENV PHP_VERSION 7.2.17
+ENV PHP_URL="https://secure.php.net/get/php-7.2.17.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.17.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="91a811ab6f6d7acb312159cf6b0a3cffe968676fdebf042e9253245cc6094f75" PHP_MD5=""
 
 RUN set -xe; \
 	\

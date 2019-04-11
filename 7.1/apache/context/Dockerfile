@@ -151,9 +151,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 
 ENV GPG_KEYS A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 1729F83938DA44E27BA0F4D3DBDB397470D12172
 
-ENV PHP_VERSION 7.1.27
-ENV PHP_URL="https://secure.php.net/get/php-7.1.27.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.27.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
-ENV PHP_SHA256="dad7ecd30941911528e471c555a01911a68aa9219696bfc1e005f8b669f4ec4b" PHP_MD5=""
+ENV PHP_VERSION 7.1.28
+ENV PHP_URL="https://secure.php.net/get/php-7.1.28.tar.bz2/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.1.28.tar.bz2.asc/from/this/mirror" PHP_FILENAME="php.tar.bz2"
+ENV PHP_SHA256="739e8733fe1fc5e69e6226da6dba7a31bacfd2e3871ad2c97a792638f22c54c9" PHP_MD5=""
 
 RUN set -xe; \
 	\
@@ -206,7 +206,7 @@ RUN set -eux; \
 		libxslt1-dev \
 # Для расширения zip.
 		libzip-dev \
-		 libssl-dev apache2-dev \
+		 libmcrypt-dev libssl-dev apache2-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -287,7 +287,7 @@ RUN set -eux; \
 		--with-sqlite3=shared \
 		--with-tidy=shared \
 		--with-xsl=shared \
-		 --with-apxs2 \
+		 --with-mcrypt=shared --with-apxs2 \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT

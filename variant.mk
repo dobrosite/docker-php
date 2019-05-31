@@ -77,6 +77,7 @@ shell: ## Запускает командную оболочку.
 	docker run -it $(DOCKER_IMAGE) /bin/bash
 
 .PHONY: tests
+#tests: | build ## Проверяет собранный образ.
 tests: ## Проверяет собранный образ.
 	docker run \
 		--volume="$(ROOT_DIR)/tests:/usr/local/tests:ro" \

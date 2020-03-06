@@ -322,7 +322,7 @@ RUN set -eux; \
 
 RUN pecl install --force \
 	memcached \
-	xdebug
+	xdebug-2.8.1
 
 RUN wget https://getcomposer.org/installer -O - -q \
 		| php -- --force --install-dir=/usr/local/bin --filename=composer

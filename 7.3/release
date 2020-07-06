@@ -1,6 +1,6 @@
-DISTRIB_RELEASE=7.3.15
-DISTRIB_URL_ASC=https://secure.php.net/get/php-7.3.15.tar.bz2.asc/from/this/mirror
-DISTRIB_URL=https://secure.php.net/get/php-7.3.15.tar.bz2/from/this/mirror
-DISTRIB_SHA256=8dbe1507ea0035f4211faa0db80fe95f39df0e39d8408223820fe9123487043d
+DISTRIB_RELEASE=7.3.19
+DISTRIB_URL_ASC=https://secure.php.net/get/php-7.3.19.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-7.3.19.tar.bz2/from/this/mirror
+DISTRIB_SHA256=0d9c1e31e29fb46ff660b48051d169d50cb0285e611d16591449d578320d34a5
 DISTRIB_MD5=
-DISTRIB_FILENAME=php-7.3.15.tar.bz2
+DISTRIB_FILENAME=php-7.3.19.tar.bz2

@@ -1,6 +1,6 @@
-DISTRIB_RELEASE=7.2.31
-DISTRIB_URL_ASC=https://secure.php.net/get/php-7.2.31.tar.bz2.asc/from/this/mirror
-DISTRIB_URL=https://secure.php.net/get/php-7.2.31.tar.bz2/from/this/mirror
-DISTRIB_SHA256=1ba7559745d704f39764a5deb002eb94f5cb8d9aaa219a6b8b32b94174e8a700
+DISTRIB_RELEASE=7.2.33
+DISTRIB_URL_ASC=https://secure.php.net/get/php-7.2.33.tar.bz2.asc/from/this/mirror
+DISTRIB_URL=https://secure.php.net/get/php-7.2.33.tar.bz2/from/this/mirror
+DISTRIB_SHA256=03dda3a3a0c8befc9b381bc9cf4638d13862783fc7b8aef43fdd4431ab85854d
 DISTRIB_MD5=
-DISTRIB_FILENAME=php-7.2.31.tar.bz2
+DISTRIB_FILENAME=php-7.2.33.tar.bz2
